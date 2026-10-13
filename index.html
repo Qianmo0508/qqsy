@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>千秋岁引 · 宫群档案</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-/* ========== 基础重置 ========== */
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
   --paper:#f7f1e3; --paper2:#fdf9f0; --ink:#2b2118; --ink2:#5b4a3a;
@@ -20,12 +20,8 @@ body{
     radial-gradient(circle at 20% 10%,rgba(201,169,97,.12),transparent 45%),
     radial-gradient(circle at 80% 90%,rgba(140,31,40,.08),transparent 45%),
     var(--paper);
-  color:var(--ink);
-  min-height:100vh;
-  line-height:1.9;
-  -webkit-font-smoothing:antialiased;
+  color:var(--ink);min-height:100vh;line-height:1.9;-webkit-font-smoothing:antialiased;
 }
-/* 宣纸纹理（纯 CSS） */
 body::before{
   content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35;
   background-image:
@@ -37,89 +33,35 @@ body::before{
 ::-webkit-scrollbar-thumb:hover{background:rgba(140,31,40,.5);}
 ::-webkit-scrollbar-track{background:transparent;}
 
-/* ========== 花边装饰 ========== */
-.border-deco{
-  position:relative;
-  border:1px solid var(--line);
-  background:linear-gradient(180deg,rgba(255,253,247,.92),rgba(252,247,237,.92));
-  box-shadow:var(--shadow);
-}
-.border-deco::before,.border-deco::after{
-  content:"";position:absolute;width:16px;height:16px;pointer-events:none;
-  border:2px solid var(--gold);opacity:.75;
-}
+.border-deco{position:relative;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,253,247,.92),rgba(252,247,237,.92));box-shadow:var(--shadow);}
+.border-deco::before,.border-deco::after{content:"";position:absolute;width:16px;height:16px;pointer-events:none;border:2px solid var(--gold);opacity:.75;}
 .border-deco::before{top:5px;left:5px;border-right:none;border-bottom:none;}
 .border-deco::after{bottom:5px;right:5px;border-left:none;border-top:none;}
 
-/* 回纹分隔线 */
-.divider{
-  height:1px;margin:18px 0;position:relative;
-  background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),var(--gold),transparent);
-}
-.divider::after{
-  content:"❖";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  color:var(--gold2);font-size:11px;background:var(--paper2);padding:0 8px;
-}
+.divider{height:1px;margin:18px 0;position:relative;background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),var(--gold),transparent);}
+.divider::after{content:"❖";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:var(--gold2);font-size:11px;background:var(--paper2);padding:0 8px;}
 
-/* ========== 布局 ========== */
 #app{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:0 16px 60px;}
 
-/* 顶部 */
-.topbar{
-  position:sticky;top:0;z-index:50;
-  background:linear-gradient(180deg,rgba(247,241,227,.97),rgba(247,241,227,.88));
-  backdrop-filter:blur(8px);
-  border-bottom:1px solid var(--line);
-  padding:10px 0;
-}
+.topbar{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,rgba(247,241,227,.97),rgba(247,241,227,.88));backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 0;}
 .topbar-inner{max-width:1280px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
-.logo{
-  font-size:22px;letter-spacing:.4em;color:var(--red);font-weight:600;
-  text-shadow:0 1px 0 rgba(201,169,97,.4);
-  display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;
-}
+.logo{font-size:22px;letter-spacing:.4em;color:var(--red);font-weight:600;text-shadow:0 1px 0 rgba(201,169,97,.4);display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;}
 .logo small{font-size:11px;letter-spacing:.2em;color:var(--gold2);font-weight:400;}
 .top-user{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink2);flex-wrap:wrap;}
-.coin-badge{
-  display:inline-flex;align-items:center;gap:5px;
-  border:1px solid var(--gold);border-radius:20px;padding:2px 12px;
-  background:linear-gradient(180deg,#fffdf6,#f5ecd6);font-size:12px;color:var(--gold2);
-  box-shadow:inset 0 1px 3px rgba(201,169,97,.2);
-}
+.coin-badge{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--gold);border-radius:20px;padding:2px 12px;background:linear-gradient(180deg,#fffdf6,#f5ecd6);font-size:12px;color:var(--gold2);box-shadow:inset 0 1px 3px rgba(201,169,97,.2);}
 
-/* 导航 */
-.navbar{
-  display:flex;gap:4px;flex-wrap:wrap;padding:14px 0 6px;
-}
-.nav-btn{
-  font-family:inherit;font-size:14px;letter-spacing:.12em;
-  padding:8px 16px;border:1px solid transparent;border-radius:3px;
-  background:transparent;color:var(--ink2);cursor:pointer;
-  transition:all .25s ease;position:relative;
-}
+.navbar{display:flex;gap:4px;flex-wrap:wrap;padding:14px 0 6px;}
+.nav-btn{font-family:inherit;font-size:14px;letter-spacing:.12em;padding:8px 16px;border:1px solid transparent;border-radius:3px;background:transparent;color:var(--ink2);cursor:pointer;transition:all .25s ease;position:relative;}
 .nav-btn:hover{color:var(--red);background:rgba(201,169,97,.12);}
-.nav-btn.active{
-  color:#fff8e8;background:linear-gradient(180deg,var(--red2),var(--red));
-  border-color:var(--gold2);box-shadow:0 2px 10px rgba(140,31,40,.3);
-}
-.nav-btn.active::after{
-  content:"";position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);
-  width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;
-  border-top:6px solid var(--red);
-}
+.nav-btn.active{color:#fff8e8;background:linear-gradient(180deg,var(--red2),var(--red));border-color:var(--gold2);box-shadow:0 2px 10px rgba(140,31,40,.3);}
+.nav-btn.active::after{content:"";position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid var(--red);}
 
-/* ========== 通用组件 ========== */
 .page{display:none;animation:fadeUp .4s ease;}
 .page.active{display:block;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
 
-.panel{
-  padding:26px 30px;margin-bottom:20px;border-radius:4px;
-}
-.panel-title{
-  font-size:20px;letter-spacing:.3em;color:var(--red);
-  display:flex;align-items:center;gap:10px;margin-bottom:4px;
-}
+.panel{padding:26px 30px;margin-bottom:20px;border-radius:4px;}
+.panel-title{font-size:20px;letter-spacing:.3em;color:var(--red);display:flex;align-items:center;gap:10px;margin-bottom:4px;}
 .panel-title::before{content:"◈";color:var(--gold2);font-size:14px;}
 .panel-sub{font-size:12px;color:var(--ink2);opacity:.7;letter-spacing:.15em;margin-bottom:12px;}
 
@@ -128,44 +70,24 @@ body::before{
 .g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));}
 .g4{grid-template-columns:repeat(auto-fit,minmax(160px,1fr));}
 
-/* 卡片 */
-.card{
-  padding:18px 20px;border-radius:4px;position:relative;
-  border:1px solid var(--line);
-  background:linear-gradient(180deg,rgba(255,253,247,.95),rgba(250,244,232,.95));
-  box-shadow:0 2px 10px rgba(43,33,24,.06);
-  transition:transform .25s,box-shadow .25s;
-}
+.card{padding:18px 20px;border-radius:4px;position:relative;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,253,247,.95),rgba(250,244,232,.95));box-shadow:0 2px 10px rgba(43,33,24,.06);transition:transform .25s,box-shadow .25s;}
 .card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(43,33,24,.12);}
 .card-name{font-size:17px;color:var(--red);letter-spacing:.12em;margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .card-line{font-size:13px;color:var(--ink2);display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed rgba(140,31,40,.1);}
 .card-line:last-child{border-bottom:none;}
 .card-line b{color:var(--ink);font-weight:600;}
 
-/* 标签 */
-.tag{
-  display:inline-block;font-size:11px;padding:1px 9px;border-radius:2px;
-  border:1px solid var(--gold);color:var(--gold2);background:rgba(201,169,97,.1);
-  letter-spacing:.08em;
-}
+.tag{display:inline-block;font-size:11px;padding:1px 9px;border-radius:2px;border:1px solid var(--gold);color:var(--gold2);background:rgba(201,169,97,.1);letter-spacing:.08em;}
 .tag.red{border-color:var(--red);color:var(--red);background:rgba(140,31,40,.07);}
 .tag.jade{border-color:var(--jade);color:var(--jade);background:rgba(74,124,111,.08);}
 
-/* 数值条 */
 .stat-row{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:13px;}
 .stat-label{width:72px;color:var(--ink2);letter-spacing:.1em;flex-shrink:0;}
 .stat-bar{flex:1;height:9px;background:rgba(140,31,40,.08);border-radius:6px;overflow:hidden;border:1px solid rgba(201,169,97,.35);}
 .stat-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--red2));border-radius:6px;transition:width .6s cubic-bezier(.4,0,.2,1);}
 .stat-val{width:52px;text-align:right;color:var(--red);font-weight:600;flex-shrink:0;}
 
-/* 按钮 */
-.btn{
-  font-family:inherit;font-size:13px;letter-spacing:.14em;
-  padding:7px 20px;border-radius:3px;cursor:pointer;
-  border:1px solid var(--gold2);
-  background:linear-gradient(180deg,#fffdf6,#f2e8d2);
-  color:var(--ink);transition:all .22s;
-}
+.btn{font-family:inherit;font-size:13px;letter-spacing:.14em;padding:7px 20px;border-radius:3px;cursor:pointer;border:1px solid var(--gold2);background:linear-gradient(180deg,#fffdf6,#f2e8d2);color:var(--ink);transition:all .22s;}
 .btn:hover{background:linear-gradient(180deg,#fff8e6,#e8d9b8);border-color:var(--red);color:var(--red);}
 .btn:active{transform:translateY(1px);}
 .btn.primary{background:linear-gradient(180deg,var(--red2),var(--red));color:#fff6e2;border-color:var(--red);}
@@ -175,97 +97,51 @@ body::before{
 .btn.sm{padding:4px 12px;font-size:12px;}
 .btn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
 
-/* 表单 */
 .field{margin-bottom:14px;}
 .field label{display:block;font-size:12px;color:var(--ink2);letter-spacing:.15em;margin-bottom:5px;}
-input,select,textarea{
-  font-family:inherit;font-size:14px;color:var(--ink);
-  width:100%;padding:8px 12px;border-radius:3px;
-  border:1px solid rgba(140,31,40,.22);
-  background:rgba(255,253,247,.8);
-  transition:border .22s,box-shadow .22s;
-}
-input:focus,select:focus,textarea:focus{
-  outline:none;border-color:var(--gold2);
-  box-shadow:0 0 0 3px rgba(201,169,97,.16);
-}
+input,select,textarea{font-family:inherit;font-size:14px;color:var(--ink);width:100%;padding:8px 12px;border-radius:3px;border:1px solid rgba(140,31,40,.22);background:rgba(255,253,247,.8);transition:border .22s,box-shadow .22s;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold2);box-shadow:0 0 0 3px rgba(201,169,97,.16);}
 textarea{resize:vertical;min-height:80px;line-height:1.8;}
 .row{display:flex;gap:12px;flex-wrap:wrap;}
 .row>*{flex:1;min-width:140px;}
 
-/* 表格 */
 .tbl{width:100%;border-collapse:collapse;font-size:13px;}
-.tbl th{
-  font-weight:500;color:var(--red);letter-spacing:.12em;font-size:12px;
-  padding:9px 10px;border-bottom:1.5px solid rgba(140,31,40,.25);text-align:left;
-  background:rgba(201,169,97,.08);
-}
+.tbl th{font-weight:500;color:var(--red);letter-spacing:.12em;font-size:12px;padding:9px 10px;border-bottom:1.5px solid rgba(140,31,40,.25);text-align:left;background:rgba(201,169,97,.08);}
 .tbl td{padding:9px 10px;border-bottom:1px dashed rgba(140,31,40,.12);color:var(--ink2);}
 .tbl tr:hover td{background:rgba(201,169,97,.07);}
 .tbl-wrap{overflow-x:auto;}
 
-/* 空状态 */
 .empty{text-align:center;padding:36px 10px;color:var(--ink2);opacity:.55;font-size:13px;letter-spacing:.15em;}
 .empty::before{content:"❁";display:block;font-size:26px;color:var(--gold);margin-bottom:10px;opacity:.6;}
 
-/* 提示 */
 .toast-wrap{position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;}
-.toast{
-  padding:10px 26px;border-radius:3px;font-size:13px;letter-spacing:.12em;
-  background:linear-gradient(180deg,#fffaf0,#f5ead2);
-  border:1px solid var(--gold);color:var(--ink);
-  box-shadow:0 6px 24px rgba(43,33,24,.2);
-  animation:toastIn .35s ease;white-space:nowrap;
-}
+.toast{padding:10px 26px;border-radius:3px;font-size:13px;letter-spacing:.12em;background:linear-gradient(180deg,#fffaf0,#f5ead2);border:1px solid var(--gold);color:var(--ink);box-shadow:0 6px 24px rgba(43,33,24,.2);animation:toastIn .35s ease;white-space:nowrap;}
 .toast.ok{border-color:var(--jade);color:var(--jade);}
 .toast.err{border-color:var(--red);color:var(--red);}
 @keyframes toastIn{from{opacity:0;transform:translateY(-14px) scale(.96);}to{opacity:1;transform:none;}}
 
-/* 抽签弹窗 */
-.modal-mask{
-  position:fixed;inset:0;background:rgba(43,33,24,.5);backdrop-filter:blur(4px);
-  display:none;align-items:center;justify-content:center;z-index:200;padding:20px;
-}
+.modal-mask{position:fixed;inset:0;background:rgba(43,33,24,.5);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:200;padding:20px;}
 .modal-mask.show{display:flex;}
-.modal{
-  max-width:420px;width:100%;padding:34px 30px;text-align:center;border-radius:4px;
-  animation:popIn .4s cubic-bezier(.34,1.56,.64,1);
-}
+.modal{max-width:480px;width:100%;padding:30px;text-align:center;border-radius:4px;animation:popIn .4s cubic-bezier(.34,1.56,.64,1);max-height:88vh;overflow-y:auto;}
+.modal.wide{max-width:720px;text-align:left;}
 @keyframes popIn{from{opacity:0;transform:scale(.86);}to{opacity:1;transform:scale(1);}}
-.modal h3{font-size:19px;letter-spacing:.3em;color:var(--red);margin-bottom:6px;}
-.modal .result{
-  font-size:34px;letter-spacing:.1em;color:var(--gold2);margin:18px 0 6px;
-  font-weight:600;text-shadow:0 2px 8px rgba(201,169,97,.35);
-}
-.modal .desc{font-size:14px;color:var(--ink2);line-height:2;margin-bottom:18px;}
-.modal .gain{font-size:15px;color:var(--jade);letter-spacing:.15em;margin-bottom:20px;}
+.modal h3{font-size:19px;letter-spacing:.3em;color:var(--red);margin-bottom:6px;text-align:center;}
+.modal .result{font-size:34px;letter-spacing:.1em;color:var(--gold2);margin:18px 0 6px;font-weight:600;text-shadow:0 2px 8px rgba(201,169,97,.35);text-align:center;}
+.modal .desc{font-size:14px;color:var(--ink2);line-height:2;margin-bottom:18px;text-align:center;}
+.modal .gain{font-size:15px;color:var(--jade);letter-spacing:.15em;margin-bottom:20px;text-align:center;}
 
-/* 抽签滚动动画 */
 .shaking{animation:shake .5s ease infinite;}
 @keyframes shake{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
 
-/* 登录页 */
-.login-wrap{
-  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
-}
-.login-box{
-  max-width:400px;width:100%;padding:44px 36px;border-radius:4px;text-align:center;
-}
-.login-box .title{
-  font-size:34px;letter-spacing:.5em;color:var(--red);text-indent:.5em;
-  margin-bottom:6px;text-shadow:0 2px 10px rgba(140,31,40,.15);
-}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+.login-box{max-width:400px;width:100%;padding:44px 36px;border-radius:4px;text-align:center;}
+.login-box .title{font-size:34px;letter-spacing:.5em;color:var(--red);text-indent:.5em;margin-bottom:6px;text-shadow:0 2px 10px rgba(140,31,40,.15);}
 .login-box .subtitle{font-size:12px;letter-spacing:.4em;color:var(--gold2);margin-bottom:26px;}
 .login-tabs{display:flex;justify-content:center;gap:0;margin-bottom:24px;}
-.login-tabs button{
-  font-family:inherit;font-size:13px;letter-spacing:.2em;padding:6px 26px;
-  background:transparent;border:none;border-bottom:2px solid transparent;
-  color:var(--ink2);cursor:pointer;transition:all .25s;
-}
+.login-tabs button{font-family:inherit;font-size:13px;letter-spacing:.2em;padding:6px 26px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--ink2);cursor:pointer;transition:all .25s;}
 .login-tabs button.active{color:var(--red);border-bottom-color:var(--red);}
 .login-box .field{text-align:left;}
 
-/* 黑市 */
 .shop-item{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--line);border-radius:4px;background:rgba(255,253,247,.7);transition:all .25s;}
 .shop-item:hover{border-color:var(--gold);background:rgba(255,250,238,.95);}
 .shop-icon{font-size:26px;width:46px;height:46px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(201,169,97,.14);border:1px solid rgba(201,169,97,.4);flex-shrink:0;}
@@ -274,25 +150,17 @@ textarea{resize:vertical;min-height:80px;line-height:1.8;}
 .shop-info .d{font-size:12px;color:var(--ink2);opacity:.75;line-height:1.7;}
 .shop-price{font-size:14px;color:var(--gold2);white-space:nowrap;font-weight:600;}
 
-/* 地图 */
 .map-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;}
-.map-cell{
-  aspect-ratio:1/1;border:1px solid var(--line);border-radius:4px;padding:12px;
-  display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
-  background:linear-gradient(160deg,rgba(255,252,244,.95),rgba(245,236,216,.85));
-  transition:all .28s;cursor:default;position:relative;overflow:hidden;
-}
+.map-cell{aspect-ratio:1/1;border:1px solid var(--line);border-radius:4px;padding:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:linear-gradient(160deg,rgba(255,252,244,.95),rgba(245,236,216,.85));transition:all .28s;cursor:default;position:relative;overflow:hidden;}
 .map-cell::after{content:"";position:absolute;inset:6px;border:1px dashed rgba(201,169,97,.35);pointer-events:none;border-radius:2px;}
 .map-cell:hover{transform:scale(1.03);border-color:var(--gold);box-shadow:0 6px 22px rgba(201,169,97,.28);}
 .map-cell .mn{font-size:15px;color:var(--red);letter-spacing:.14em;margin-bottom:6px;position:relative;z-index:1;}
 .map-cell .mo{font-size:11px;color:var(--ink2);opacity:.8;position:relative;z-index:1;line-height:1.6;}
 
-/* 派系树 */
 .faction-block{margin-bottom:16px;padding:16px 18px;border-left:3px solid var(--gold);background:rgba(255,253,247,.65);border-radius:0 4px 4px 0;}
 .faction-block .fh{font-size:16px;color:var(--red);letter-spacing:.18em;margin-bottom:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .member-chip{display:inline-block;font-size:12px;padding:2px 12px;margin:3px 5px 3px 0;border-radius:20px;background:rgba(201,169,97,.14);border:1px solid rgba(201,169,97,.45);color:var(--ink2);}
 
-/* 时间线 */
 .timeline{position:relative;padding-left:26px;}
 .timeline::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:1px;background:linear-gradient(180deg,var(--gold),rgba(201,169,97,.15));}
 .tl-item{position:relative;padding:0 0 18px 0;}
@@ -302,22 +170,11 @@ textarea{resize:vertical;min-height:80px;line-height:1.8;}
 .tl-text{font-size:14px;color:var(--ink);}
 .tl-text b{color:var(--red);}
 
-/* 段落文本（群规/国史） */
 .prose{font-size:14.5px;line-height:2.3;color:var(--ink2);letter-spacing:.03em;}
 .prose p{margin-bottom:14px;text-indent:2em;}
 .prose h4{font-size:16px;color:var(--red);letter-spacing:.2em;margin:20px 0 10px;text-indent:0;}
 .prose h4::before{content:"▎";color:var(--gold2);margin-right:6px;}
 
-/* 折叠 */
-.fold{border:1px solid var(--line);border-radius:4px;margin-bottom:10px;overflow:hidden;background:rgba(255,253,247,.6);}
-.fold-h{padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:14px;color:var(--ink);letter-spacing:.1em;transition:background .22s;user-select:none;}
-.fold-h:hover{background:rgba(201,169,97,.1);}
-.fold-h::after{content:"❯";font-size:11px;color:var(--gold2);transition:transform .28s;}
-.fold.open .fold-h::after{transform:rotate(90deg);}
-.fold-b{max-height:0;overflow:hidden;transition:max-height .35s ease;padding:0 16px;}
-.fold.open .fold-b{max-height:3000px;padding:4px 16px 16px;}
-
-/* 响应式 */
 @media(max-width:640px){
   .panel{padding:20px 16px;}
   .logo{font-size:18px;letter-spacing:.28em;}
@@ -334,7 +191,6 @@ textarea{resize:vertical;min-height:80px;line-height:1.8;}
 </head>
 <body>
 
-<!-- ========== 登录页 ========== -->
 <div id="loginView" class="login-wrap">
   <div class="login-box border-deco">
     <div class="title">千秋岁引</div>
@@ -343,33 +199,30 @@ textarea{resize:vertical;min-height:80px;line-height:1.8;}
       <button id="tabLogin" class="active" onclick="switchTab('login')">登 录</button>
       <button id="tabReg" onclick="switchTab('reg')">注 册</button>
     </div>
-
     <div id="formLogin">
       <div class="field"><label>名 号</label><input id="loginName" placeholder="请输入名号" autocomplete="off"></div>
       <div class="field"><label>密 钥</label><input id="loginPwd" type="password" placeholder="请输入密钥"></div>
       <button class="btn primary" style="width:100%;margin-top:8px;" onclick="doLogin()">入 卷</button>
     </div>
-
     <div id="formReg" class="hide">
       <div class="field"><label>名 号</label><input id="regName" placeholder="2-12字，全站唯一" autocomplete="off"></div>
       <div class="field"><label>密 钥</label><input id="regPwd" type="password" placeholder="至少4位"></div>
       <div class="field"><label>确认密钥</label><input id="regPwd2" type="password" placeholder="再次输入"></div>
+      <div class="field"><label>掌卷密钥（选填）</label><input id="regAdminKey" placeholder="不知道就留空" autocomplete="off"></div>
       <button class="btn primary" style="width:100%;margin-top:8px;" onclick="doRegister()">立 卷</button>
       <div style="font-size:11px;color:var(--ink2);opacity:.6;margin-top:14px;line-height:1.8;">
-        首个注册者自动成为「掌卷人」（管理员）
+        普通注册无需填写掌卷密钥<br>注册后即可查看全站档案
       </div>
     </div>
   </div>
 </div>
 
-<!-- ========== 主站 ========== -->
 <div id="app" class="hide">
   <div class="topbar">
     <div class="topbar-inner">
       <div class="logo" onclick="go('archive')">千秋岁引<small>卷</small></div>
       <div class="top-user">
-        <span class="coin-badge">◈ 银两 <b id="topSilver">0</b></span>
-        <span class="coin-badge">◈ 积分 <b id="topPoints">0</b></span>
+        <span class="coin-badge">◈ 位份 <b id="topRank">—</b></span>
         <span id="topName" style="color:var(--red);letter-spacing:.1em;"></span>
         <button class="btn ghost sm" onclick="logout()">离卷</button>
       </div>
@@ -378,11 +231,9 @@ textarea{resize:vertical;min-height:80px;line-height:1.8;}
       <div class="navbar" id="navbar"></div>
     </div>
   </div>
-
   <div id="pages"></div>
 </div>
 
-<!-- 弹窗 -->
 <div class="modal-mask" id="modalMask">
   <div class="modal border-deco" id="modalBox"></div>
 </div>
@@ -390,24 +241,26 @@ textarea{resize:vertical;min-height:80px;line-height:1.8;}
 
 <script>
 /* =========================================================
-   千秋岁引 · 数据层
-   所有数据存 localStorage，按账号隔离，永久保留
+   千秋岁引 · 云端数据层（Supabase）
    ========================================================= */
-const DB_KEY = 'QIANQIU_SUIYIN_DB_V1';
+const SUPABASE_URL = 'https://zgohtnwifgntwhevqdja.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpnb2h0bndpZmdudHdoZXZxZGphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE4OTgxMTAsImV4cCI6MjEwNzQ3NDExMH0.fsHMxjcefm7APOPV4qVlDGCcJrWh4e0U1Mpn98DXuDU';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const ADMIN_KEY = 'QIANQIU2026';
+const DB_ID = 'main';
 
 const DEFAULT_RULES = `
 <h4>一、入卷之礼</h4>
-<p>凡入【千秋岁引】者，先注册名号，再于「人物档案」中录入己身资料。档案一经录入，即存档于本站，永续留存。退出、重进、换设备（同浏览器）皆不丢失。</p>
-<h4>二、日常修习</h4>
-<p>每日可于「才艺培养」中修习，抽签决定所得。才艺数值自动累加，并同步更新至人物档案。谋略值同此理，于「谋略值」页抽签获取。</p>
-<h4>三、银两与市易</h4>
-<p>银两为站内通货，可用于「黑市」购取物什。购取时自动扣减，绝不重置。银两只增不减，除非购取。</p>
-<h4>四、妃眷与子嗣</h4>
-<p>侍寝、有孕、诞育等事，皆登记于「妃彤」「眷彤」「子嗣册」，由掌卷人或本人填写，形成宫闱实录。</p>
-<h4>五、晋位与党派</h4>
-<p>凡位份变动，皆录入「晋位史」，形成一条不可磨灭的攀升轨迹。派系、党派由掌卷人维护。</p>
-<h4>六、卷宗之重</h4>
-<p>本站数值一经记录，永久留存。<b>唯有本人主动点击「一切重置」，方可使自身数值归零。</b>此外任何操作皆不重置。请珍惜每一次修习与抉择。</p>
+<p>凡入【千秋岁引】者，先注册名号。掌卷人负责录入妃眷档案，普通入卷者仅查看。</p>
+<h4>二、档案公开</h4>
+<p>本卷所有档案、妃彤、眷彤、子嗣、晋位、派系、党派、朝堂事件，皆为公开信息，所有入卷者皆可查看。</p>
+<h4>三、日常修习</h4>
+<p>每日可于「才艺培养」中修习三次，每次所得一至八点。谋略值每日可卜算两次，所得负五至正五。</p>
+<h4>四、银两与市易</h4>
+<p>黑市货品仅供查看，站内不设购买。</p>
+<h4>五、卷宗之重</h4>
+<p>本站数值一经记录，永久留存。<b>唯有本人主动点击「一切重置」，方可使自身数值归零。</b></p>
 `;
 
 const DEFAULT_HISTORY = `
@@ -420,19 +273,17 @@ const DEFAULT_HISTORY = `
 <p style="text-align:center;color:var(--gold2);letter-spacing:.3em;margin-top:24px;">— 未完待续 —</p>
 `;
 
-/* 黑市默认商品 */
 const DEFAULT_SHOP = [
-  {id:'s1', icon:'🪭', name:'云锦团扇', desc:'江南贡品，执之增仪态三分', price:120, stat:'才艺', gain:3},
-  {id:'s2', icon:'📜', name:'古琴谱', desc:'前朝遗谱，习之琴艺大进', price:200, stat:'才艺', gain:6},
-  {id:'s3', icon:'🕯️', name:'沉水香', desc:'一炷清香，静心凝神', price:80, stat:'谋略', gain:2},
-  {id:'s4', icon:'📖', name:'兵书残卷', desc:'残页三张，可窥韬略之门', price:260, stat:'谋略', gain:8},
-  {id:'s5', icon:'💍', name:'羊脂玉镯', desc:'温润无瑕，赠人自用皆宜', price:400, stat:'声望', gain:10},
-  {id:'s6', icon:'🏮', name:'宫灯一盏', desc:'夜行照明，亦可点缀宫室', price:60, stat:'声望', gain:1},
-  {id:'s7', icon:'🌸', name:'胭脂水粉', desc:'京中时兴，容色更添三分', price:150, stat:'才艺', gain:4},
-  {id:'s8', icon:'⚔️', name:'玄铁匕首', desc:'防身之物，亦是胆气', price:520, stat:'谋略', gain:15}
+  {id:'s1', icon:'🪭', name:'云锦团扇', desc:'江南贡品，执之增仪态三分', price:120},
+  {id:'s2', icon:'📜', name:'古琴谱', desc:'前朝遗谱，习之琴艺大进', price:200},
+  {id:'s3', icon:'🕯️', name:'沉水香', desc:'一炷清香，静心凝神', price:80},
+  {id:'s4', icon:'📖', name:'兵书残卷', desc:'残页三张，可窥韬略之门', price:260},
+  {id:'s5', icon:'💍', name:'羊脂玉镯', desc:'温润无瑕，赠人自用皆宜', price:400},
+  {id:'s6', icon:'🏮', name:'宫灯一盏', desc:'夜行照明，亦可点缀宫室', price:60},
+  {id:'s7', icon:'🌸', name:'胭脂水粉', desc:'京中时兴，容色更添三分', price:150},
+  {id:'s8', icon:'⚔️', name:'玄铁匕首', desc:'防身之物，亦是胆气', price:520}
 ];
 
-/* 地图默认 */
 const DEFAULT_MAP = [
   {name:'椒房殿', owner:'—', desc:'中宫正殿，凤位所居'},
   {name:'长信殿', owner:'—', desc:'东宫之首，妃位以上'},
@@ -451,60 +302,77 @@ const DEFAULT_MAP = [
   {name:'冷宫', owner:'—', desc:'寂寂长门，慎入'}
 ];
 
-/* ---------- 读写 ---------- */
-function loadDB(){
-  try{
-    const raw = localStorage.getItem(DB_KEY);
-    if(raw) return JSON.parse(raw);
-  }catch(e){ console.warn('存档读取失败',e); }
+let DB = null;
+let saveTimer = null;
+let isSaving = false;
+
+function defaultDB(){
   return {
-    users: {},          // { username: {pwd, role, createdAt, data:{...}} }
-    session: null,      // 当前登录用户名
-    shop: JSON.parse(JSON.stringify(DEFAULT_SHOP)),
+    users: {},
+    archives: {},
+    archiveSeq: 0,
+    feiTong: [],
+    juanTong: [],
+    children: [],
+    rankHistory: [],
+    factions: [],
+    parties: [],
+    events: [],
     map: JSON.parse(JSON.stringify(DEFAULT_MAP)),
+    shop: JSON.parse(JSON.stringify(DEFAULT_SHOP)),
     rules: DEFAULT_RULES,
     history: DEFAULT_HISTORY,
-    events: [],         // 朝堂事件
-    factions: [],       // 派系
-    parties: [],        // 党派
-    globalLog: []       // 全站动态
+    globalLog: []
   };
 }
-let DB = loadDB();
 
-function saveDB(){
+async function loadDB(){
   try{
-    localStorage.setItem(DB_KEY, JSON.stringify(DB));
+    const { data, error } = await supabase
+      .from('qianqiu')
+      .select('data')
+      .eq('id', DB_ID)
+      .maybeSingle();
+    if(error) throw error;
+    if(data && data.data){
+      DB = data.data;
+      const def = defaultDB();
+      for(const k in def){
+        if(DB[k] === undefined) DB[k] = def[k];
+      }
+    }else{
+      DB = defaultDB();
+      await saveDB(true);
+    }
   }catch(e){
-    toast('存档写入失败，请检查浏览器存储权限','err');
+    console.error('云端读取失败', e);
+    toast('云端连接失败，请检查网络','err');
+    DB = defaultDB();
   }
 }
 
-/* ---------- 用户数据模板 ---------- */
-function newUserData(){
-  return {
-    archive: {
-      name:'', title:'', rank:'', age:'', birthday:'', height:'',
-      appearance:'', personality:'', family:'', palace:'', faction:'',
-      entered:'', bio:'', avatar:''
-    },
-    stats: { 才艺:0, 谋略:0, 声望:0 },
-    silver: 500,
-    points: 0,
-    skills: [],          // 才艺学习记录
-    wisdomLog: [],       // 谋略抽签记录
-    feiTong: [],         // 妃彤（侍寝记录）
-    juanTong: [],        // 眷彤
-    children: [],        // 子嗣
-    rankHistory: [],     // 晋位史
-    purchases: [],       // 购买记录
-    log: []              // 个人动态
-  };
+async function saveDB(immediate){
+  if(isSaving) return;
+  if(!immediate){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(()=>saveDB(true), 400);
+    return;
+  }
+  isSaving = true;
+  try{
+    const { error } = await supabase
+      .from('qianqiu')
+      .upsert({ id: DB_ID, data: DB });
+    if(error) throw error;
+  }catch(e){
+    console.error('云端保存失败', e);
+    toast('保存失败，请检查网络','err');
+  }finally{
+    isSaving = false;
+  }
 }
 
-/* =========================================================
-   工具
-   ========================================================= */
+/* ---------- 工具 ---------- */
 function toast(msg, type=''){
   const w = document.getElementById('toastWrap');
   const d = document.createElement('div');
@@ -517,9 +385,40 @@ function toast(msg, type=''){
 function now(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function nowFull(){ const d=new Date(); return now()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function cur(){ return DB.session ? DB.users[DB.session] : null; }
-function curData(){ const u=cur(); return u ? u.data : null; }
+function cur(){ return DB && DB.session ? DB.users[DB.session] : null; }
 function isAdmin(){ const u=cur(); return u && u.role==='admin'; }
+
+function newArchiveId(){
+  DB.archiveSeq = (DB.archiveSeq || 0) + 1;
+  return 'a' + DB.archiveSeq;
+}
+
+function myArchive(){
+  if(!DB || !DB.session) return null;
+  const id = Object.keys(DB.archives).find(k => DB.archives[k].owner === DB.session);
+  return id ? DB.archives[id] : null;
+}
+
+/* 取玩家当前位份：晋位史里最后一条该玩家的记录 */
+function myRank(){
+  if(!DB || !DB.session) return '—';
+  const a = myArchive();
+  const myName = a ? a.name : DB.session;
+  const rec = DB.rankHistory.find(r => r.name === myName);
+  if(rec && rec.to) return rec.to;
+  if(a && a.rank) return a.rank;
+  return '—';
+}
+
+function pushLog(text){
+  if(!DB || !DB.session) return;
+  const u = cur(); if(!u) return;
+  u.log = u.log || [];
+  u.log.unshift({time:nowFull(), text});
+  if(u.log.length > 100) u.log.length = 100;
+  DB.globalLog.unshift({time:nowFull(), who:DB.session, text});
+  if(DB.globalLog.length > 200) DB.globalLog.length = 200;
+}
 
 /* =========================================================
    登录 / 注册
@@ -536,21 +435,29 @@ function doRegister(){
   const name = document.getElementById('regName').value.trim();
   const pwd  = document.getElementById('regPwd').value;
   const pwd2 = document.getElementById('regPwd2').value;
+  const adminKey = document.getElementById('regAdminKey').value.trim();
+
   if(name.length < 2 || name.length > 12) return toast('名号需2-12字','err');
   if(pwd.length < 4) return toast('密钥至少4位','err');
   if(pwd !== pwd2) return toast('两次密钥不一致','err');
   if(DB.users[name]) return toast('此名号已被占用','err');
 
-  const isFirst = Object.keys(DB.users).length === 0;
+  const isAdminUser = adminKey === ADMIN_KEY;
+
   DB.users[name] = {
     pwd: pwd,
-    role: isFirst ? 'admin' : 'member',
+    role: isAdminUser ? 'admin' : 'member',
     createdAt: nowFull(),
-    data: newUserData()
+    silver: 0,
+    points: 0,
+    skills: [],
+    wisdomLog: [],
+    log: []
   };
+
   DB.session = name;
   saveDB();
-  toast(isFirst ? '立卷成功，您已是掌卷人' : '立卷成功', 'ok');
+  toast(isAdminUser ? '立卷成功，您已是掌卷人' : '立卷成功', 'ok');
   enterSite();
 }
 
@@ -567,8 +474,7 @@ function doLogin(){
 }
 
 function logout(){
-  DB.session = null;
-  saveDB();
+  if(DB){ DB.session = null; saveDB(); }
   document.getElementById('app').classList.add('hide');
   document.getElementById('loginView').classList.remove('hide');
   document.getElementById('loginName').value='';
@@ -576,7 +482,7 @@ function logout(){
 }
 
 /* =========================================================
-   导航与页面框架
+   导航
    ========================================================= */
 const NAV = [
   {id:'archive',  name:'人物档案'},
@@ -629,229 +535,261 @@ function go(id){
 }
 
 function refreshTop(){
-  const d = curData();
-  if(!d) return;
+  const u = cur();
+  if(!u) return;
   document.getElementById('topName').textContent = DB.session + (isAdmin()?'（掌卷人）':'');
-  document.getElementById('topSilver').textContent = d.silver;
-  document.getElementById('topPoints').textContent = d.points;
+  document.getElementById('topRank').textContent = myRank();
 }
 
 /* =========================================================
-   页面：人物档案
+   人物档案（只有掌卷人可编辑，所有人可看）
    ========================================================= */
-function renderArchive(){
-  const d = curData();
-  const a = d.archive;
-  const filled = !!a.name;
+function emptyArchive(){
+  return {
+    id:'', owner:null, name:'', xiaozi:'', age:'', birthday:'',
+    family:'', identity:'', appearance:'', constitution:'', personality:'',
+    goodAt:'', skill1:'', skill2:'', skill3:'',
+    party:'', faction:'', lifespan:'', palace:'', wisdom:'',
+    pregnancy:'', marriage:'', rank:'', skin:'',
+    createdAt:'', updatedAt:''
+  };
+}
 
+function renderArchive(){
+  const all = Object.values(DB.archives).sort((a,b)=>(a.createdAt||'').localeCompare(b.createdAt||''));
   document.getElementById('pg-archive').innerHTML = `
   <div class="panel border-deco">
     <div class="panel-title">人物档案</div>
-    <div class="panel-sub">录 入 己 身 · 永 存 于 卷</div>
+    <div class="panel-sub">共 ${all.length} 位在册 · 全站公开可见</div>
     <div class="divider"></div>
 
-    ${filled ? `
-    <div class="grid g2">
-      <div class="card">
-        <div class="card-name">${esc(a.name)} <span class="tag red">${esc(a.rank||'待定')}</span></div>
-        <div class="card-line"><span>封号</span><b>${esc(a.title||'—')}</b></div>
-        <div class="card-line"><span>居所</span><b>${esc(a.palace||'—')}</b></div>
-        <div class="card-line"><span>年岁</span><b>${esc(a.age||'—')}</b></div>
-        <div class="card-line"><span>生辰</span><b>${esc(a.birthday||'—')}</b></div>
-        <div class="card-line"><span>身高</span><b>${esc(a.height||'—')}</b></div>
-        <div class="card-line"><span>入宫</span><b>${esc(a.entered||'—')}</b></div>
-        <div class="card-line"><span>派系</span><b>${esc(a.faction||'无')}</b></div>
-      </div>
-      <div class="card">
-        <div class="card-name">数 值 · 实时同步</div>
-        <div class="stat-row"><span class="stat-label">才艺</span>
-          <span class="stat-bar"><span class="stat-fill" style="width:${Math.min(100,d.stats.才艺)}%"></span></span>
-          <span class="stat-val">${d.stats.才艺}</span></div>
-        <div class="stat-row"><span class="stat-label">谋略</span>
-          <span class="stat-bar"><span class="stat-fill" style="width:${Math.min(100,d.stats.谋略)}%"></span></span>
-          <span class="stat-val">${d.stats.谋略}</span></div>
-        <div class="stat-row"><span class="stat-label">声望</span>
-          <span class="stat-bar"><span class="stat-fill" style="width:${Math.min(100,d.stats.声望)}%"></span></span>
-          <span class="stat-val">${d.stats.声望}</span></div>
-        <div class="divider" style="margin:14px 0;"></div>
-        <div class="card-line"><span>银两</span><b style="color:var(--gold2)">◈ ${d.silver}</b></div>
-        <div class="card-line"><span>积分</span><b>${d.points}</b></div>
-        <div class="card-line"><span>子嗣</span><b>${d.children.length} 位</b></div>
-        <div class="card-line"><span>晋位</span><b>${d.rankHistory.length} 次</b></div>
-      </div>
-    </div>
+    ${all.length ? `
+    <div class="grid g3">
+      ${all.map(a=>`
+        <div class="card" style="cursor:pointer;" onclick="viewArchive('${a.id}')">
+          <div class="card-name">${esc(a.name||'未命名')} <span class="tag red">${esc(a.rank||'待定')}</span></div>
+          <div class="card-line"><span>小字</span><b>${esc(a.xiaozi||'—')}</b></div>
+          <div class="card-line"><span>年岁</span><b>${esc(a.age||'—')}</b></div>
+          <div class="card-line"><span>党派</span><b>${esc(a.party||'—')}</b></div>
+          <div class="card-line"><span>派系</span><b>${esc(a.faction||'—')}</b></div>
+          <div class="card-line"><span>住处</span><b>${esc(a.palace||'—')}</b></div>
+        </div>
+      `).join('')}
+    </div>` : `<div class="empty">尚无在册档案</div>`}
 
-    <div class="divider"></div>
-    <div class="grid g2">
-      <div class="card">
-        <div class="card-name">容 貌</div>
-        <div class="prose" style="text-indent:0;">${esc(a.appearance||'尚未录入。')}</div>
-      </div>
-      <div class="card">
-        <div class="card-name">性 情</div>
-        <div class="prose" style="text-indent:0;">${esc(a.personality||'尚未录入。')}</div>
-      </div>
-      <div class="card">
-        <div class="card-name">家 世</div>
-        <div class="prose" style="text-indent:0;">${esc(a.family||'尚未录入。')}</div>
-      </div>
-      <div class="card">
-        <div class="card-name">生 平</div>
-        <div class="prose" style="text-indent:0;">${esc(a.bio||'尚未录入。')}</div>
-      </div>
-    </div>
-    <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;">
-      <button class="btn" onclick="toggleEditArchive()">修 改 档 案</button>
-      <button class="btn ghost" onclick="exportMe()">导 出 我 的 存 档</button>
-    </div>
-    ` : `
-    <div class="empty">尚未录入档案，请于下方填写</div>
-    `}
-
-    <div id="editArchiveBox" class="${filled?'hide':''}" style="margin-top:22px;">
+    ${isAdmin() ? `
       <div class="divider"></div>
-      <div class="panel-sub">录 入 / 修 改</div>
-      <div class="grid g2">
-        <div class="field"><label>姓 名 *</label><input id="a_name" value="${esc(a.name)}" placeholder="如：沈清梧"></div>
-        <div class="field"><label>封 号</label><input id="a_title" value="${esc(a.title)}" placeholder="如：婉"></div>
-        <div class="field"><label>位 份</label><input id="a_rank" value="${esc(a.rank)}" placeholder="如：贵人 / 嫔"></div>
-        <div class="field"><label>年 岁</label><input id="a_age" value="${esc(a.age)}" placeholder="如：十七"></div>
-        <div class="field"><label>生 辰</label><input id="a_birthday" value="${esc(a.birthday)}" placeholder="如：三月初七"></div>
-        <div class="field"><label>身 高</label><input id="a_height" value="${esc(a.height)}" placeholder="如：五尺二寸"></div>
-        <div class="field"><label>居 所</label><input id="a_palace" value="${esc(a.palace)}" placeholder="如：听雪阁"></div>
-        <div class="field"><label>派 系</label><input id="a_faction" value="${esc(a.faction)}" placeholder="如：清流党"></div>
-        <div class="field"><label>入 宫 时 间</label><input id="a_entered" value="${esc(a.entered)}" placeholder="如：千秋三年春"></div>
+      <div class="panel-sub">掌 卷 人 录 入</div>
+      <div style="font-size:13px;color:var(--ink2);margin-bottom:12px;line-height:1.9;">
+        录入后全站可见。名讳一栏禁止使用「檀」字。
       </div>
-      <div class="field"><label>容 貌</label><textarea id="a_appearance" placeholder="眉目、身段、气韵……">${esc(a.appearance)}</textarea></div>
-      <div class="field"><label>性 情</label><textarea id="a_personality" placeholder="温婉、清冷、明艳……">${esc(a.personality)}</textarea></div>
-      <div class="field"><label>家 世</label><textarea id="a_family" placeholder="父兄官职、门第渊源……">${esc(a.family)}</textarea></div>
-      <div class="field"><label>生 平</label><textarea id="a_bio" placeholder="入宫缘由、过往经历……">${esc(a.bio)}</textarea></div>
-      <button class="btn primary" onclick="saveArchive()">存 档 入 卷</button>
-    </div>
+      <button class="btn primary" onclick="openEditArchive('')">+ 新 增 妃 眷 档 案</button>
+    ` : ''}
   </div>`;
 }
 
-function toggleEditArchive(){
-  document.getElementById('editArchiveBox').classList.toggle('hide');
+function viewArchive(id){
+  const a = DB.archives[id];
+  if(!a) return;
+  showModal(`
+    <h3>${esc(a.name||'未命名')}</h3>
+    <div style="text-align:center;margin-bottom:16px;">
+      <span class="tag red">${esc(a.rank||'待定')}</span>
+      ${a.xiaozi?`<span class="tag">小字 ${esc(a.xiaozi)}</span>`:''}
+      ${a.palace?`<span class="tag">${esc(a.palace)}</span>`:''}
+    </div>
+    <div class="divider"></div>
+    <div class="grid g2">
+      <div>
+        <div class="card-line"><span>名讳</span><b>${esc(a.name||'—')}</b></div>
+        <div class="card-line"><span>小字</span><b>${esc(a.xiaozi||'—')}</b></div>
+        <div class="card-line"><span>年岁</span><b>${esc(a.age||'—')}</b></div>
+        <div class="card-line"><span>生辰</span><b>${esc(a.birthday||'—')}</b></div>
+        <div class="card-line"><span>家世</span><b>${esc(a.family||'—')}</b></div>
+        <div class="card-line"><span>身份</span><b>${esc(a.identity||'—')}</b></div>
+        <div class="card-line"><span>容貌</span><b>${esc(a.appearance||'—')}</b></div>
+        <div class="card-line"><span>体质</span><b>${esc(a.constitution||'—')}</b></div>
+        <div class="card-line"><span>性情</span><b>${esc(a.personality||'—')}</b></div>
+        <div class="card-line"><span>擅长</span><b>${esc(a.goodAt||'—')}</b></div>
+        <div class="card-line"><span>才艺一</span><b>${esc(a.skill1||'—')}</b></div>
+        <div class="card-line"><span>才艺二</span><b>${esc(a.skill2||'—')}</b></div>
+        <div class="card-line"><span>才艺三</span><b>${esc(a.skill3||'—')}</b></div>
+      </div>
+      <div>
+        <div class="card-line"><span>党派</span><b>${esc(a.party||'—')}</b></div>
+        <div class="card-line"><span>派系</span><b>${esc(a.faction||'—')}</b></div>
+        <div class="card-line"><span>寿命</span><b>${esc(a.lifespan||'—')}</b></div>
+        <div class="card-line"><span>住处</span><b>${esc(a.palace||'—')}</b></div>
+        <div class="card-line"><span>谋略</span><b>${esc(a.wisdom||'—')}</b></div>
+        <div class="card-line"><span>孕绝</span><b>${esc(a.pregnancy||'—')}</b></div>
+        <div class="card-line"><span>婚配</span><b>${esc(a.marriage||'—')}</b></div>
+        <div class="card-line"><span>位份</span><b>${esc(a.rank||'—')}</b></div>
+        <div class="card-line"><span>皮相</span><b>${esc(a.skin||'—')}</b></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+      ${isAdmin()?`<button class="btn primary" onclick="closeModal();openEditArchive('${a.id}')">修 改</button>`:''}
+      ${isAdmin()?`<button class="btn ghost" onclick="deleteArchive('${a.id}')">删 除</button>`:''}
+      <button class="btn ghost" onclick="closeModal()">关 闭</button>
+    </div>
+  `, true);
 }
 
-function saveArchive(){
-  const d = curData();
-  const g = id => document.getElementById(id).value.trim();
-  if(!g('a_name')) return toast('姓名不可为空','err');
-  const beforeRank = d.archive.rank;
-  d.archive = {
-    name:g('a_name'), title:g('a_title'), rank:g('a_rank'), age:g('a_age'),
-    birthday:g('a_birthday'), height:g('a_height'), appearance:g('a_appearance'),
-    personality:g('a_personality'), family:g('a_family'), palace:g('a_palace'),
-    faction:g('a_faction'), entered:g('a_entered'), bio:g('a_bio')
-  };
-  // 位份变动自动记入晋位史
-  if(beforeRank && d.archive.rank && beforeRank !== d.archive.rank){
-    d.rankHistory.unshift({time:nowFull(), from:beforeRank, to:d.archive.rank, note:'档案更新'});
-    pushLog(`位份由「${beforeRank}」变为「${d.archive.rank}」`);
-  }else if(!beforeRank && d.archive.rank){
-    d.rankHistory.unshift({time:nowFull(), from:'—', to:d.archive.rank, note:'初次册封'});
+function openEditArchive(id){
+  const isNew = !id;
+  const a = isNew ? emptyArchive() : DB.archives[id];
+  if(!a) return;
+  if(!isAdmin()) return toast('仅掌卷人可编辑','err');
+
+  showModal(`
+    <h3>${isNew?'新 增 妃 眷 档 案':'修 改 档 案'}</h3>
+    <div class="panel-sub" style="text-align:center;">录入后全站公开可见 · 名讳禁「檀」</div>
+    <div class="divider"></div>
+    <div class="grid g2">
+      <div class="field"><label>名 讳（禁檀）*</label><input id="ea_name" value="${esc(a.name)}" placeholder="不得含「檀」字"></div>
+      <div class="field"><label>小 字</label><input id="ea_xiaozi" value="${esc(a.xiaozi)}"></div>
+      <div class="field"><label>年 岁</label><input id="ea_age" value="${esc(a.age)}" placeholder="如：16+"></div>
+      <div class="field"><label>生 辰</label><input id="ea_birthday" value="${esc(a.birthday)}"></div>
+      <div class="field"><label>家 世</label><input id="ea_family" value="${esc(a.family)}"></div>
+      <div class="field"><label>身 份</label><input id="ea_identity" value="${esc(a.identity)}" placeholder="嫡/庶/养/义"></div>
+      <div class="field"><label>容 貌</label><input id="ea_appearance" value="${esc(a.appearance)}"></div>
+      <div class="field"><label>体 质</label><input id="ea_constitution" value="${esc(a.constitution)}"></div>
+      <div class="field"><label>性 情</label><input id="ea_personality" value="${esc(a.personality)}"></div>
+      <div class="field"><label>擅 长（限五）</label><input id="ea_goodAt" value="${esc(a.goodAt)}"></div>
+      <div class="field"><label>才 艺 一</label><input id="ea_skill1" value="${esc(a.skill1)}"></div>
+      <div class="field"><label>才 艺 二</label><input id="ea_skill2" value="${esc(a.skill2)}"></div>
+      <div class="field"><label>才 艺 三</label><input id="ea_skill3" value="${esc(a.skill3)}"></div>
+      <div class="field"><label>党 派</label><input id="ea_party" value="${esc(a.party)}" placeholder="珹王党 / 皇帝党"></div>
+      <div class="field"><label>派 系</label><input id="ea_faction" value="${esc(a.faction)}" placeholder="权 / 宠 / 中立"></div>
+      <div class="field"><label>寿 命</label><input id="ea_lifespan" value="${esc(a.lifespan)}"></div>
+      <div class="field"><label>住 处</label><input id="ea_palace" value="${esc(a.palace)}"></div>
+      <div class="field"><label>谋 略</label><input id="ea_wisdom" value="${esc(a.wisdom)}"></div>
+      <div class="field"><label>孕 绝</label><input id="ea_pregnancy" value="${esc(a.pregnancy)}"></div>
+      <div class="field"><label>婚 配</label><input id="ea_marriage" value="${esc(a.marriage)}" placeholder="皇帝 / 珹王 / 瑨王"></div>
+      <div class="field"><label>位 份</label><input id="ea_rank" value="${esc(a.rank)}"></div>
+      <div class="field"><label>皮 相</label><input id="ea_skin" value="${esc(a.skin)}" placeholder="真人皮相"></div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button class="btn primary" onclick="saveArchive('${id}')">存 档 入 卷</button>
+      <button class="btn ghost" onclick="closeModal()">取 消</button>
+    </div>
+  `, true);
+}
+
+function saveArchive(id){
+  if(!isAdmin()) return toast('无权限','err');
+  const g = i => document.getElementById(i).value.trim();
+  const name = g('ea_name');
+  if(!name) return toast('名讳不可为空','err');
+  if(name.includes('檀')) return toast('名讳禁止使用「檀」字','err');
+
+  const isNew = !id;
+  if(isNew){
+    const newId = newArchiveId();
+    DB.archives[newId] = {
+      id:newId, owner:null,
+      name, xiaozi:g('ea_xiaozi'), age:g('ea_age'), birthday:g('ea_birthday'),
+      family:g('ea_family'), identity:g('ea_identity'), appearance:g('ea_appearance'),
+      constitution:g('ea_constitution'), personality:g('ea_personality'),
+      goodAt:g('ea_goodAt'), skill1:g('ea_skill1'), skill2:g('ea_skill2'), skill3:g('ea_skill3'),
+      party:g('ea_party'), faction:g('ea_faction'), lifespan:g('ea_lifespan'),
+      palace:g('ea_palace'), wisdom:g('ea_wisdom'), pregnancy:g('ea_pregnancy'),
+      marriage:g('ea_marriage'), rank:g('ea_rank'), skin:g('ea_skin'),
+      createdAt: nowFull(), updatedAt: nowFull()
+    };
+    pushLog(`新增档案：${name}`);
+  }else{
+    const a = DB.archives[id];
+    if(!a) return;
+    const beforeRank = a.rank;
+    Object.assign(a, {
+      name, xiaozi:g('ea_xiaozi'), age:g('ea_age'), birthday:g('ea_birthday'),
+      family:g('ea_family'), identity:g('ea_identity'), appearance:g('ea_appearance'),
+      constitution:g('ea_constitution'), personality:g('ea_personality'),
+      goodAt:g('ea_goodAt'), skill1:g('ea_skill1'), skill2:g('ea_skill2'), skill3:g('ea_skill3'),
+      party:g('ea_party'), faction:g('ea_faction'), lifespan:g('ea_lifespan'),
+      palace:g('ea_palace'), wisdom:g('ea_wisdom'), pregnancy:g('ea_pregnancy'),
+      marriage:g('ea_marriage'), rank:g('ea_rank'), skin:g('ea_skin'),
+      updatedAt: nowFull()
+    });
+    if(beforeRank && a.rank && beforeRank !== a.rank){
+      DB.rankHistory.unshift({time:nowFull(), name:a.name, from:beforeRank, to:a.rank, note:'档案更新', creator:DB.session});
+    }
+    pushLog(`更新档案：${name}`);
   }
-  pushLog('更新了人物档案');
   saveDB();
-  toast('档案已存档，永久保留','ok');
+  toast('已存档，全站可见','ok');
+  closeModal();
   go('archive');
 }
 
-function pushLog(text){
-  const d = curData(); if(!d) return;
-  d.log.unshift({time:nowFull(), text});
-  if(d.log.length > 100) d.log.length = 100;
-  DB.globalLog.unshift({time:nowFull(), who:DB.session, text});
-  if(DB.globalLog.length > 200) DB.globalLog.length = 200;
+function deleteArchive(id){
+  if(!isAdmin()) return toast('无权限','err');
+  if(!confirm('确定删除此档案？')) return;
+  delete DB.archives[id];
+  saveDB();
+  toast('已删除');
+  closeModal();
+  go('archive');
 }
 
 /* =========================================================
-   页面：才艺培养（抽签）
+   才艺培养（每天3次，+1~8）
    ========================================================= */
-const SKILL_POOL = [
-  {name:'琴',   min:3, max:8,  desc:'指尖流韵，七弦和鸣。'},
-  {name:'棋',   min:2, max:7,  desc:'黑白纵横，一子定局。'},
-  {name:'书',   min:2, max:7,  desc:'笔走龙蛇，墨染宣纸。'},
-  {name:'画',   min:3, max:8,  desc:'丹青点染，山水入卷。'},
-  {name:'舞',   min:4, max:10, desc:'霓裳回旋，步步生莲。'},
-  {name:'歌',   min:3, max:9,  desc:'珠玉落盘，余音绕梁。'},
-  {name:'诗',   min:2, max:8,  desc:'出口成章，才思敏捷。'},
-  {name:'绣',   min:3, max:9,  desc:'针线穿梭，栩栩如生。'}
-];
+const SKILL_NAMES = ['琴','棋','书','画','舞','歌','诗','绣','茶','香'];
 
 function renderSkill(){
-  const d = curData();
+  const u = cur();
   const today = now();
-  const todayCount = d.skills.filter(s=>s.date===today).length;
+  const todayCount = (u.skills||[]).filter(s=>s.date===today).length;
   const limit = 3;
-
   document.getElementById('pg-skill').innerHTML = `
   <div class="panel border-deco">
     <div class="panel-title">才艺培养</div>
-    <div class="panel-sub">抽 签 定 得 · 数 值 永 存</div>
+    <div class="panel-sub">抽 签 定 得 · 每 日 三 次 · 每 次 +1~8</div>
     <div class="divider"></div>
-
     <div class="grid g3" style="margin-bottom:20px;">
       <div class="card" style="text-align:center;">
         <div style="font-size:12px;color:var(--ink2);letter-spacing:.2em;">今日已修习</div>
         <div style="font-size:30px;color:var(--red);font-weight:600;">${todayCount} <span style="font-size:14px;color:var(--ink2)">/ ${limit}</span></div>
       </div>
       <div class="card" style="text-align:center;">
-        <div style="font-size:12px;color:var(--ink2);letter-spacing:.2em;">才艺总值</div>
-        <div style="font-size:30px;color:var(--gold2);font-weight:600;">${d.stats.才艺}</div>
+        <div style="font-size:12px;color:var(--ink2);letter-spacing:.2em;">累计修习</div>
+        <div style="font-size:30px;color:var(--gold2);font-weight:600;">${(u.skills||[]).length}</div>
       </div>
       <div class="card" style="text-align:center;">
-        <div style="font-size:12px;color:var(--ink2);letter-spacing:.2em;">累计修习</div>
-        <div style="font-size:30px;color:var(--jade);font-weight:600;">${d.skills.length}</div>
+        <div style="font-size:12px;color:var(--ink2);letter-spacing:.2em;">积分</div>
+        <div style="font-size:30px;color:var(--jade);font-weight:600;">${u.points||0}</div>
       </div>
     </div>
-
     <div style="text-align:center;margin:26px 0;">
       <button class="btn primary" style="padding:14px 54px;font-size:16px;letter-spacing:.4em;"
         ${todayCount>=limit?'disabled':''} onclick="drawSkill()">
         ${todayCount>=limit?'今 日 已 满':'抽 签 修 习'}
       </button>
-      <div style="font-size:12px;color:var(--ink2);opacity:.65;margin-top:12px;letter-spacing:.1em;">
-        每日限 ${limit} 次 · 数值自动同步至人物档案
-      </div>
     </div>
-
     <div class="divider"></div>
     <div class="panel-sub">修 习 记 录</div>
-    ${d.skills.length ? `
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead><tr><th>时间</th><th>科目</th><th>所获</th><th>签文</th></tr></thead>
-        <tbody>
-          ${d.skills.slice(0,30).map(s=>`
-            <tr><td>${esc(s.time)}</td><td><span class="tag">${esc(s.name)}</span></td>
-            <td style="color:var(--jade);font-weight:600;">+${s.gain}</td><td>${esc(s.desc)}</td></tr>
-          `).join('')}
-        </tbody>
-      </table>
-    </div>` : `<div class="empty">尚无修习记录</div>`}
+    ${(u.skills||[]).length ? `
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>时间</th><th>科目</th><th>所获</th></tr></thead>
+      <tbody>${u.skills.slice(0,30).map(s=>`<tr><td>${esc(s.time)}</td><td><span class="tag">${esc(s.name)}</span></td><td style="color:var(--jade);font-weight:600;">+${s.gain}</td></tr>`).join('')}</tbody>
+    </table></div>` : `<div class="empty">尚无修习记录</div>`}
   </div>`;
 }
 
 function drawSkill(){
-  const d = curData();
+  const u = cur();
   const today = now();
-  const todayCount = d.skills.filter(s=>s.date===today).length;
+  const todayCount = (u.skills||[]).filter(s=>s.date===today).length;
   if(todayCount >= 3) return toast('今日修习已满','err');
-
-  const sk = SKILL_POOL[Math.floor(Math.random()*SKILL_POOL.length)];
-  let gain = Math.floor(Math.random()*(sk.max-sk.min+1)) + sk.min;
-  // 10% 暴击
-  const crit = Math.random() < 0.1;
-  if(crit) gain = Math.round(gain * 2);
-
-  showDrawModal('才 艺 抽 签', sk.name, sk.desc, gain, crit, ()=>{
-    d.stats.才艺 += gain;
-    d.points += gain;
-    d.skills.unshift({time:nowFull(), date:today, name:sk.name, gain, desc:sk.desc, crit});
-    pushLog(`修习「${sk.name}」，才艺 +${gain}${crit?'（暴击）':''}`);
+  const sk = SKILL_NAMES[Math.floor(Math.random()*SKILL_NAMES.length)];
+  const gain = Math.floor(Math.random()*8) + 1;
+  showDrawModal('才 艺 抽 签', sk, '勤修不辍，日有所进。', gain, false, ()=>{
+    u.points = (u.points||0) + gain;
+    u.skills.unshift({time:nowFull(), date:today, name:sk, gain});
+    pushLog(`修习「${sk}」，+${gain}`);
     saveDB();
     refreshTop();
     go('skill');
@@ -859,96 +797,70 @@ function drawSkill(){
 }
 
 /* =========================================================
-   页面：谋略值（抽签）
+   谋略值（每天2次，-5~+5）
    ========================================================= */
-const WISDOM_POOL = [
-  {name:'上上签', min:10, max:18, desc:'运筹帷幄，决胜千里。'},
-  {name:'上吉签', min:7,  max:12, desc:'洞若观火，明察秋毫。'},
-  {name:'中吉签', min:5,  max:9,  desc:'审时度势，进退有度。'},
-  {name:'中平签', min:3,  max:6,  desc:'静观其变，稳中求进。'},
-  {name:'下签',   min:1,  max:3,  desc:'谋事在人，成事在天。'}
-];
-
 function renderWisdom(){
-  const d = curData();
+  const u = cur();
   const today = now();
-  const todayCount = d.wisdomLog.filter(s=>s.date===today).length;
-  const limit = 3;
-
+  const todayCount = (u.wisdomLog||[]).filter(s=>s.date===today).length;
+  const limit = 2;
   document.getElementById('pg-wisdom').innerHTML = `
   <div class="panel border-deco">
     <div class="panel-title">谋 略 值</div>
-    <div class="panel-sub">运 筹 帷 幄 · 抽 签 定 数</div>
+    <div class="panel-sub">抽 签 卜 算 · 每 日 两 次 · 所 得 -5 ~ +5</div>
     <div class="divider"></div>
-
     <div class="grid g3" style="margin-bottom:20px;">
       <div class="card" style="text-align:center;">
         <div style="font-size:12px;color:var(--ink2);letter-spacing:.2em;">今日已卜</div>
         <div style="font-size:30px;color:var(--red);font-weight:600;">${todayCount} <span style="font-size:14px;color:var(--ink2)">/ ${limit}</span></div>
       </div>
       <div class="card" style="text-align:center;">
-        <div style="font-size:12px;color:var(--ink2);letter-spacing:.2em;">谋略总值</div>
-        <div style="font-size:30px;color:var(--gold2);font-weight:600;">${d.stats.谋略}</div>
+        <div style="font-size:12px;color:var(--ink2);letter-spacing:.2em;">累计卜算</div>
+        <div style="font-size:30px;color:var(--gold2);font-weight:600;">${(u.wisdomLog||[]).length}</div>
       </div>
       <div class="card" style="text-align:center;">
-        <div style="font-size:12px;color:var(--ink2);letter-spacing:.2em;">累计卜算</div>
-        <div style="font-size:30px;color:var(--jade);font-weight:600;">${d.wisdomLog.length}</div>
+        <div style="font-size:12px;color:var(--ink2);letter-spacing:.2em;">积分</div>
+        <div style="font-size:30px;color:var(--jade);font-weight:600;">${u.points||0}</div>
       </div>
     </div>
-
     <div style="text-align:center;margin:26px 0;">
       <button class="btn primary" style="padding:14px 54px;font-size:16px;letter-spacing:.4em;"
         ${todayCount>=limit?'disabled':''} onclick="drawWisdom()">
         ${todayCount>=limit?'今 日 已 满':'抽 签 卜 算'}
       </button>
-      <div style="font-size:12px;color:var(--ink2);opacity:.65;margin-top:12px;letter-spacing:.1em;">
-        每日限 ${limit} 次 · 数值自动同步至人物档案
-      </div>
     </div>
-
     <div class="divider"></div>
     <div class="panel-sub">卜 算 记 录</div>
-    ${d.wisdomLog.length ? `
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead><tr><th>时间</th><th>签文</th><th>所获</th><th>解语</th></tr></thead>
-        <tbody>
-          ${d.wisdomLog.slice(0,30).map(s=>`
-            <tr><td>${esc(s.time)}</td><td><span class="tag jade">${esc(s.name)}</span></td>
-            <td style="color:var(--jade);font-weight:600;">+${s.gain}</td><td>${esc(s.desc)}</td></tr>
-          `).join('')}
-        </tbody>
-      </table>
-    </div>` : `<div class="empty">尚无卜算记录</div>`}
+    ${(u.wisdomLog||[]).length ? `
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>时间</th><th>所获</th></tr></thead>
+      <tbody>${u.wisdomLog.slice(0,30).map(s=>`<tr><td>${esc(s.time)}</td><td style="color:${s.gain>=0?'var(--jade)':'var(--red)'};font-weight:600;">${s.gain>=0?'+':''}${s.gain}</td></tr>`).join('')}</tbody>
+    </table></div>` : `<const></const><div class="empty">尚无卜算记录</div>`}
   </div>`;
 }
 
 function drawWisdom(){
-  const d = curData();
+  const u = cur();
   const today = now();
-  const todayCount = d.wisdomLog.filter(s=>s.date===today).length;
-  if(todayCount >= 3) return toast('今日卜算已满','err');
-
-  const w = WISDOM_POOL[Math.floor(Math.random()*WISDOM_POOL.length)];
-  let gain = Math.floor(Math.random()*(w.max-w.min+1)) + w.min;
-  const crit = Math.random() < 0.08;
-  if(crit) gain = Math.round(gain * 1.8);
-
-  showDrawModal('谋 略 卜 算', w.name, w.desc, gain, crit, ()=>{
-    d.stats.谋略 += gain;
-    d.points += gain;
-    d.wisdomLog.unshift({time:nowFull(), date:today, name:w.name, gain, desc:w.desc, crit});
-    pushLog(`卜算得「${w.name}」，谋略 +${gain}${crit?'（暴击）':''}`);
+  const todayCount = (u.wisdomLog||[]).filter(s=>s.date===today).length;
+  if(todayCount >= 2) return toast('今日卜算已满','err');
+  const gain = Math.floor(Math.random()*11) - 5;
+  const desc = gain > 0 ? '谋定后动，步步为营。' : gain < 0 ? '一时失算，来日再谋。' : '谋事在人，成事在天。';
+  showDrawModal('谋 略 卜 算', (gain>=0?'+':'')+gain, desc, 0, false, ()=>{
+    u.points = (u.points||0) + gain;
+    u.wisdomLog.unshift({time:nowFull(), date:today, gain});
+    pushLog(`卜算，谋略 ${gain>=0?'+':''}${gain}`);
     saveDB();
     refreshTop();
     go('wisdom');
-  });
+  }, true);
 }
 
 /* ---------- 抽签弹窗 ---------- */
-function showDrawModal(title, result, desc, gain, crit, cb){
+function showDrawModal(title, result, desc, gain, crit, cb, hideGain){
   const mask = document.getElementById('modalMask');
   const box  = document.getElementById('modalBox');
+  box.className = 'modal border-deco';
   box.innerHTML = `
     <h3>${esc(title)}</h3>
     <div class="result shaking" id="drawResult">？ ？ ？</div>
@@ -957,165 +869,135 @@ function showDrawModal(title, result, desc, gain, crit, cb){
     <button class="btn primary" id="drawBtn" style="display:none;width:100%;">收 下</button>
   `;
   mask.classList.add('show');
-
   let tick = 0;
-  const fakeNames = ['琴','棋','书','画','舞','歌','诗','绣','上上签','上吉签','中吉签','中平签','下签'];
+  const fake = ['琴','棋','书','画','舞','歌','+1','+2','+3','-1','-2','0'];
   const timer = setInterval(()=>{
-    document.getElementById('drawResult').textContent = fakeNames[Math.floor(Math.random()*fakeNames.length)];
+    document.getElementById('drawResult').textContent = fake[Math.floor(Math.random()*fake.length)];
     tick++;
     if(tick > 16){
       clearInterval(timer);
       const r = document.getElementById('drawResult');
       r.classList.remove('shaking');
       r.textContent = result;
-      r.style.color = crit ? 'var(--red)' : 'var(--gold2)';
-      document.getElementById('drawDesc').textContent = desc + (crit ? ' ※ 天赐良机，双倍所获！' : '');
-      document.getElementById('drawGain').textContent = '所 获 · +' + gain;
+      document.getElementById('drawDesc').textContent = desc;
+      if(!hideGain) document.getElementById('drawGain').textContent = '所 获 · +' + gain;
       const btn = document.getElementById('drawBtn');
       btn.style.display = 'block';
-      btn.onclick = ()=>{
-        mask.classList.remove('show');
-        cb && cb();
-      };
+      btn.onclick = ()=>{ mask.classList.remove('show'); cb && cb(); };
     }
   }, 70);
 }
 
+function showModal(html, wide){
+  const mask = document.getElementById('modalMask');
+  const box  = document.getElementById('modalBox');
+  box.className = 'modal border-deco' + (wide?' wide':'');
+  box.innerHTML = html;
+  mask.classList.add('show');
+}
+function closeModal(){
+  document.getElementById('modalMask').classList.remove('show');
+}
+
 /* =========================================================
-   页面：妃彤 / 眷彤
+   通用记录页（妃彤/眷彤/子嗣/晋位/派系/党派/事件）
    ========================================================= */
 function renderFeiTong(){
-  const d = curData();
-  const list = d.feiTong;
+  const list = DB.feiTong;
   document.getElementById('pg-feitong').innerHTML = `
   <div class="panel border-deco">
     <div class="panel-title">妃 彤</div>
-    <div class="panel-sub">侍 寝 记 录 · 宫 闱 实 录</div>
+    <div class="panel-sub">侍 寝 记 录 · 全 站 公 开 · 共 ${list.length} 条</div>
     <div class="divider"></div>
-
+    ${isAdmin()?`
     <div class="grid g4" style="margin-bottom:18px;">
-      <div class="field"><label>日 期</label><input id="ft_date" value="${now()}" placeholder="YYYY-MM-DD"></div>
-      <div class="field"><label>妃 嫔 名 号</label><input id="ft_name" placeholder="如：沈清梧"></div>
-      <div class="field"><label>位 份</label><input id="ft_rank" placeholder="如：贵人"></div>
-      <div class="field"><label>备 注</label><input id="ft_note" placeholder="如：初次 / 赐汤"></div>
+      <div class="field"><label>日 期</label><input id="ft_date" value="${now()}"></div>
+      <div class="field"><label>妃 嫔 名 号</label><input id="ft_name"></div>
+      <div class="field"><label>位 份</label><input id="ft_rank"></div>
+      <div class="field"><label>备 注</label><input id="ft_note"></div>
     </div>
     <button class="btn primary" onclick="addFeiTong()">登 记 入 册</button>
-
-    <div class="divider"></div>
+    <div class="divider"></div>`:''}
     ${list.length ? `
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead><tr><th>日期</th><th>名号</th><th>位份</th><th>备注</th><th>操作</th></tr></thead>
-        <tbody>
-          ${list.map((x,i)=>`
-            <tr><td>${esc(x.date)}</td><td><b style="color:var(--ink)">${esc(x.name)}</b></td>
-            <td><span class="tag red">${esc(x.rank||'—')}</span></td><td>${esc(x.note||'—')}</td>
-            <td><button class="btn ghost sm" onclick="delRecord('feiTong',${i})">删</button></td></tr>
-          `).join('')}
-        </tbody>
-      </table>
-    </div>` : `<div class="empty">尚无侍寝记录</div>`}
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>日期</th><th>名号</th><th>位份</th><th>备注</th>${isAdmin()?'<th>操作</th>':''}</tr></thead>
+      <tbody>${list.map((x,i)=>`
+        <tr><td>${esc(x.date)}</td><td><b style="color:var(--ink)">${esc(x.name)}</b></td>
+        <td><span class="tag red">${esc(x.rank||'—')}</span></td><td>${esc(x.note||'—')}</td>
+        ${isAdmin()?`<td><button class="btn ghost sm" onclick="delItem('feiTong',${i},'feitong')">删</button></td>`:''}</tr>
+      `).join('')}</tbody>
+    </table></div>` : `<div class="empty">尚无侍寝记录</div>`}
   </div>`;
 }
-
 function addFeiTong(){
-  const d = curData();
   const date = document.getElementById('ft_date').value.trim();
   const name = document.getElementById('ft_name').value.trim();
-  const rank = document.getElementById('ft_rank').value.trim();
-  const note = document.getElementById('ft_note').value.trim();
   if(!date || !name) return toast('日期与名号不可为空','err');
-  d.feiTong.unshift({date, name, rank, note});
-  pushLog(`妃彤登记：${name}（${date}）`);
+  DB.feiTong.unshift({date, name, rank:document.getElementById('ft_rank').value.trim(), note:document.getElementById('ft_note').value.trim()});
   saveDB();
-  toast('已入册，永久保留','ok');
+  toast('已入册','ok');
   go('feitong');
 }
 
 function renderJuanTong(){
-  const d = curData();
-  const list = d.juanTong;
+  const list = DB.juanTong;
   document.getElementById('pg-juantong').innerHTML = `
   <div class="panel border-deco">
     <div class="panel-title">眷 彤</div>
-    <div class="panel-sub">眷 属 记 录 · 恩 宠 有 数</div>
+    <div class="panel-sub">眷 属 记 录 · 共 ${list.length} 条</div>
     <div class="divider"></div>
-
+    ${isAdmin()?`
     <div class="grid g4" style="margin-bottom:18px;">
-      <div class="field"><label>日 期</label><input id="jt_date" value="${now()}" placeholder="YYYY-MM-DD"></div>
-      <div class="field"><label>眷 属 名 号</label><input id="jt_name" placeholder="如：某氏"></div>
-      <div class="field"><label>身 份</label><input id="jt_rank" placeholder="如：女官 / 侍妾"></div>
-      <div class="field"><label>备 注</label><input id="jt_note" placeholder="备注"></div>
+      <div class="field"><label>日 期</label><input id="jt_date" value="${now()}"></div>
+      <div class="field"><label>眷 属 名 号</label><input id="jt_name"></div>
+      <div class="field"><label>身 份</label><input id="jt_rank"></div>
+      <div class="field"><label>备 注</label><input id="jt_note"></div>
     </div>
     <button class="btn primary" onclick="addJuanTong()">登 记 入 册</button>
-
-    <div class="divider"></div>
+    <div class="divider"></div>`:''}
     ${list.length ? `
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead><tr><th>日期</th><th>名号</th><th>身份</th><th>备注</th><th>操作</th></tr></thead>
-        <tbody>
-          ${list.map((x,i)=>`
-            <tr><td>${esc(x.date)}</td><td><b style="color:var(--ink)">${esc(x.name)}</b></td>
-            <td><span class="tag">${esc(x.rank||'—')}</span></td><td>${esc(x.note||'—')}</td>
-            <td><button class="btn ghost sm" onclick="delRecord('juanTong',${i})">删</button></td></tr>
-          `).join('')}
-        </tbody>
-      </table>
-    </div>` : `<div class="empty">尚无眷属记录</div>`}
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>日期</th><th>名号</th><th>身份</th><th>备注</th>${isAdmin()?'<th>操作</th>':''}</tr></thead>
+      <tbody>${list.map((x,i)=>`
+        <tr><td>${esc(x.date)}</td><td><b style="color:var(--ink)">${esc(x.name)}</b></td>
+        <td><span class="tag">${esc(x.rank||'—')}</span></td><td>${esc(x.note||'—')}</td>
+        ${isAdmin()?`<td><button class="btn ghost sm" onclick="delItem('juanTong',${i},'juantong')">删</button></td>`:''}</tr>
+      `).join('')}</tbody>
+    </table></div>` : `<div class="empty">尚无眷属记录</div>`}
   </div>`;
 }
-
 function addJuanTong(){
-  const d = curData();
   const date = document.getElementById('jt_date').value.trim();
   const name = document.getElementById('jt_name').value.trim();
-  const rank = document.getElementById('jt_rank').value.trim();
-  const note = document.getElementById('jt_note').value.trim();
   if(!date || !name) return toast('日期与名号不可为空','err');
-  d.juanTong.unshift({date, name, rank, note});
-  pushLog(`眷彤登记：${name}（${date}）`);
+  DB.juanTong.unshift({date, name, rank:document.getElementById('jt_rank').value.trim(), note:document.getElementById('jt_note').value.trim()});
   saveDB();
-  toast('已入册，永久保留','ok');
+  toast('已入册','ok');
   go('juantong');
 }
 
-function delRecord(key, idx){
-  if(!confirm('确定删除此条记录？此操作不可撤销。')) return;
-  const d = curData();
-  d[key].splice(idx,1);
-  saveDB();
-  toast('已删除');
-  go(currentPage);
-}
-
-/* =========================================================
-   页面：子嗣册
-   ========================================================= */
 function renderChildren(){
-  const d = curData();
+  const list = DB.children;
   document.getElementById('pg-children').innerHTML = `
   <div class="panel border-deco">
     <div class="panel-title">子 嗣 册</div>
-    <div class="panel-sub">皇 嗣 登 记 · 血 脉 延 绵</div>
+    <div class="panel-sub">皇 嗣 登 记 · 共 ${list.length} 位</div>
     <div class="divider"></div>
-
+    ${isAdmin()?`
     <div class="grid g4" style="margin-bottom:18px;">
-      <div class="field"><label>姓 名</label><input id="ch_name" placeholder="如：萧承煜"></div>
-      <div class="field"><label>性 别</label>
-        <select id="ch_sex"><option>皇子</option><option>公主</option></select></div>
-      <div class="field"><label>生 母</label><input id="ch_mother" placeholder="如：沈清梧"></div>
+      <div class="field"><label>姓 名</label><input id="ch_name"></div>
+      <div class="field"><label>性 别</label><select id="ch_sex"><option>皇子</option><option>公主</option></select></div>
+      <div class="field"><label>生 母</label><input id="ch_mother"></div>
       <div class="field"><label>出 生 日</label><input id="ch_date" value="${now()}"></div>
-      <div class="field"><label>序 齿</label><input id="ch_order" placeholder="如：皇三子"></div>
-      <div class="field"><label>封 号</label><input id="ch_title" placeholder="如：安平"></div>
+      <div class="field"><label>序 齿</label><input id="ch_order"></div>
+      <div class="field"><label>封 号</label><input id="ch_title"></div>
     </div>
-    <div class="field"><label>备 注</label><textarea id="ch_note" placeholder="性情、趣事、养育情况……"></textarea></div>
+    <div class="field"><label>备 注</label><textarea id="ch_note"></textarea></div>
     <button class="btn primary" onclick="addChild()">登 记 入 册</button>
-
-    <div class="divider"></div>
-    ${d.children.length ? `
+    <div class="divider"></div>`:''}
+    ${list.length ? `
     <div class="grid g3">
-      ${d.children.map((c,i)=>`
+      ${list.map((c,i)=>`
         <div class="card">
           <div class="card-name">${esc(c.name)} <span class="tag ${c.sex==='皇子'?'red':'jade'}">${esc(c.sex)}</span></div>
           <div class="card-line"><span>序齿</span><b>${esc(c.order||'—')}</b></div>
@@ -1123,99 +1005,93 @@ function renderChildren(){
           <div class="card-line"><span>封号</span><b>${esc(c.title||'—')}</b></div>
           <div class="card-line"><span>生辰</span><b>${esc(c.date)}</b></div>
           ${c.note?`<div style="font-size:12.5px;color:var(--ink2);margin-top:8px;line-height:1.8;">${esc(c.note)}</div>`:''}
-          <div style="margin-top:10px;"><button class="btn ghost sm" onclick="delRecord('children',${i})">删 除</button></div>
+          ${isAdmin()?`<div style="margin-top:10px;"><button class="btn ghost sm" onclick="delItem('children',${i},'children')">删 除</button></div>`:''}
         </div>
       `).join('')}
     </div>` : `<div class="empty">尚无子嗣记录</div>`}
   </div>`;
 }
-
 function addChild(){
-  const d = curData();
   const name = document.getElementById('ch_name').value.trim();
   if(!name) return toast('姓名不可为空','err');
-  d.children.unshift({
-    name,
-    sex: document.getElementById('ch_sex').value,
-    mother: document.getElementById('ch_mother').value.trim(),
-    date: document.getElementById('ch_date').value.trim(),
-    order: document.getElementById('ch_order').value.trim(),
-    title: document.getElementById('ch_title').value.trim(),
-    note: document.getElementById('ch_note').value.trim()
+  DB.children.unshift({
+    name, sex:document.getElementById('ch_sex').value,
+    mother:document.getElementById('ch_mother').value.trim(),
+    date:document.getElementById('ch_date').value.trim(),
+    order:document.getElementById('ch_order').value.trim(),
+    title:document.getElementById('ch_title').value.trim(),
+    note:document.getElementById('ch_note').value.trim()
   });
-  pushLog(`子嗣册新增：${name}`);
   saveDB();
-  toast('已入册，永久保留','ok');
+  toast('已入册','ok');
   go('children');
 }
 
-/* =========================================================
-   页面：晋位史
-   ========================================================= */
 function renderRank(){
-  const d = curData();
+  const list = DB.rankHistory;
   document.getElementById('pg-rank').innerHTML = `
   <div class="panel border-deco">
     <div class="panel-title">晋 位 史</div>
-    <div class="panel-sub">一 步 一 阶 · 皆 有 记 载</div>
+    <div class="panel-sub">一 步 一 阶 · 共 ${list.length} 条 · 顶上显示最新一条</div>
     <div class="divider"></div>
-
+    ${isAdmin()?`
     <div class="grid g4" style="margin-bottom:18px;">
+      <div class="field"><label>妃 嫔 名 号</label><input id="rk_name"></div>
       <div class="field"><label>时 间</label><input id="rk_time" value="${now()}"></div>
-      <div class="field"><label>原 位 份</label><input id="rk_from" placeholder="如：贵人"></div>
-      <div class="field"><label>新 位 份</label><input id="rk_to" placeholder="如：嫔"></div>
-      <div class="field"><label>缘 由</label><input id="rk_note" placeholder="如：诞育皇嗣"></div>
+      <div class="field"><label>原 位 份</label><input id="rk_from"></div>
+      <div class="field"><label>新 位 份</label><input id="rk_to"></div>
     </div>
+    <div class="field"><label>缘 由</label><input id="rk_note"></div>
     <button class="btn primary" onclick="addRank()">记 录 晋 位</button>
-
-    <div class="divider"></div>
-    ${d.rankHistory.length ? `
+    <div class="divider"></div>`:''}
+    ${list.length ? `
     <div class="timeline">
-      ${d.rankHistory.map((r,i)=>`
+      ${list.map((r,i)=>`
         <div class="tl-item ${i===0?'now':''}">
-          <div class="tl-time">${esc(r.time)}</div>
+          <div class="tl-time">${esc(r.time)} · <b style="color:var(--red);">${esc(r.name||'—')}</b></div>
           <div class="tl-text">由 <b>${esc(r.from||'—')}</b> 晋为 <b>${esc(r.to)}</b>
             ${r.note?` · <span style="color:var(--ink2);font-size:13px;">${esc(r.note)}</span>`:''}</div>
+          ${isAdmin()?`<button class="btn ghost sm" style="margin-top:6px;" onclick="delItem('rankHistory',${i},'rank')">删 除</button>`:''}
         </div>
       `).join('')}
     </div>` : `<div class="empty">尚无晋位记录</div>`}
   </div>`;
 }
-
 function addRank(){
-  const d = curData();
+  const name = document.getElementById('rk_name').value.trim();
   const to = document.getElementById('rk_to').value.trim();
+  if(!name) return toast('名号不可为空','err');
   if(!to) return toast('新位份不可为空','err');
-  d.rankHistory.unshift({
-    time: document.getElementById('rk_time').value.trim() || nowFull(),
-    from: document.getElementById('rk_from').value.trim(),
-    to: to,
-    note: document.getElementById('rk_note').value.trim()
+  DB.rankHistory.unshift({
+    name, time:document.getElementById('rk_time').value.trim() || nowFull(),
+    from:document.getElementById('rk_from').value.trim(), to,
+    note:document.getElementById('rk_note').value.trim()
   });
-  d.archive.rank = to;
-  pushLog(`晋位：${to}`);
+  const archId = Object.keys(DB.archives).find(k => DB.archives[k].name === name);
+  if(archId) DB.archives[archId].rank = to;
   saveDB();
   toast('已记入晋位史','ok');
   go('rank');
 }
 
+function delItem(key, idx, page){
+  if(!isAdmin()) return toast('无权限','err');
+  if(!confirm('确定删除此条记录？')) return;
+  DB[key].splice(idx,1);
+  saveDB();
+  toast('已删除');
+  go(page);
+}
+
 /* =========================================================
-   页面：黑市
+   黑市（只查看，不可购买）
    ========================================================= */
 function renderShop(){
-  const d = curData();
   document.getElementById('pg-shop').innerHTML = `
   <div class="panel border-deco">
     <div class="panel-title">黑 市</div>
-    <div class="panel-sub">琳 琅 满 目 · 一 手 交 钱 一 手 交 货</div>
+    <div class="panel-sub">琳 琅 满 目 · 仅 供 观 览</div>
     <div class="divider"></div>
-
-    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:20px;padding:14px 18px;border:1px solid var(--gold);border-radius:4px;background:rgba(201,169,97,.08);">
-      <span style="font-size:13px;color:var(--ink2);letter-spacing:.15em;">囊 中 银 两</span>
-      <span style="font-size:24px;color:var(--gold2);font-weight:600;">◈ ${d.silver}</span>
-      <span style="margin-left:auto;font-size:12px;color:var(--ink2);opacity:.7;">购买后自动扣款，扣款永久生效</span>
-    </div>
-
     <div class="grid g2">
       ${DB.shop.map(it=>`
         <div class="shop-item">
@@ -1223,67 +1099,28 @@ function renderShop(){
           <div class="shop-info">
             <div class="n">${esc(it.name)}</div>
             <div class="d">${esc(it.desc)}</div>
-            <div class="d" style="color:var(--jade);margin-top:3px;">购得后 ${esc(it.stat)} +${it.gain}</div>
           </div>
           <div style="text-align:right;">
             <div class="shop-price">◈ ${it.price}</div>
-            <button class="btn sm" style="margin-top:6px;" onclick="buy('${it.id}')"
-              ${d.silver < it.price ? 'disabled' : ''}>购 买</button>
           </div>
         </div>
       `).join('')}
     </div>
-
-    <div class="divider"></div>
-    <div class="panel-sub">购 买 记 录</div>
-    ${d.purchases.length ? `
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead><tr><th>时间</th><th>物品</th><th>花费</th><th>所得</th></tr></thead>
-        <tbody>
-          ${d.purchases.slice(0,30).map(p=>`
-            <tr><td>${esc(p.time)}</td><td>${esc(p.name)}</td>
-            <td style="color:var(--red)">-${p.price}</td>
-            <td style="color:var(--jade)">${esc(p.stat)} +${p.gain}</td></tr>
-          `).join('')}
-        </tbody>
-      </table>
-    </div>` : `<div class="empty">尚无购买记录</div>`}
+    <div style="text-align:center;font-size:12px;color:var(--ink2);opacity:.6;margin-top:20px;letter-spacing:.15em;">
+      — 货 品 仅 供 观 览 ， 站 内 不 设 购 买 —
+    </div>
   </div>`;
 }
 
-function buy(id){
-  const d = curData();
-  const it = DB.shop.find(x=>x.id===id);
-  if(!it) return;
-  if(d.silver < it.price) return toast('银两不足','err');
-  if(!confirm(`确认花费 ◈${it.price} 购取「${it.name}」？`)) return;
-
-  d.silver -= it.price;
-  if(d.stats[it.stat] !== undefined){
-    d.stats[it.stat] += it.gain;
-  }else{
-    d.stats[it.stat] = it.gain;
-  }
-  d.purchases.unshift({time:nowFull(), name:it.name, price:it.price, stat:it.stat, gain:it.gain});
-  pushLog(`黑市购取「${it.name}」，耗银 ${it.price}`);
-  saveDB();
-  refreshTop();
-  toast(`购得「${it.name}」，${it.stat}+${it.gain}`,'ok');
-  go('shop');
-}
-
 /* =========================================================
-   页面：地图
+   地图
    ========================================================= */
 function renderMap(){
-  const d = curData();
   document.getElementById('pg-map').innerHTML = `
   <div class="panel border-deco">
     <div class="panel-title">宫 城 地 图</div>
     <div class="panel-sub">殿 阁 楼 台 · 各 有 其 主</div>
     <div class="divider"></div>
-
     <div class="map-grid">
       ${DB.map.map((m,i)=>`
         <div class="map-cell">
@@ -1293,56 +1130,49 @@ function renderMap(){
         </div>
       `).join('')}
     </div>
-
+    ${isAdmin()?`
     <div class="divider"></div>
-    <div class="panel-sub">住 所 登 记（点击下方按钮修改）</div>
-    ${isAdmin() ? `
+    <div class="panel-sub">住 所 登 记</div>
     <div class="grid g4" style="margin-bottom:14px;">
       <div class="field"><label>选择殿阁</label>
-        <select id="map_sel">
-          ${DB.map.map((m,i)=>`<option value="${i}">${esc(m.name)}</option>`).join('')}
-        </select>
+        <select id="map_sel">${DB.map.map((m,i)=>`<option value="${i}">${esc(m.name)}</option>`).join('')}</select>
       </div>
-      <div class="field"><label>入住者</label><input id="map_owner" placeholder="填入名号，留空为无人"></div>
+      <div class="field"><label>入住者</label><input id="map_owner" placeholder="留空为无人"></div>
     </div>
-    <button class="btn primary" onclick="setMapOwner()">确 认 入 住</button>
-    ` : `<div style="font-size:13px;color:var(--ink2);opacity:.7;">仅掌卷人可修改住所登记。</div>`}
+    <button class="btn primary" onclick="setMapOwner()">确 认 入 住</button>`:''}
   </div>`;
 }
-
 function setMapOwner(){
   if(!isAdmin()) return toast('无权限','err');
   const i = parseInt(document.getElementById('map_sel').value);
   DB.map[i].owner = document.getElementById('map_owner').value.trim() || '—';
   saveDB();
-  toast('已更新住所','ok');
+  toast('已更新','ok');
   go('map');
 }
 
 /* =========================================================
-   页面：派系 / 党派
+   派系 / 党派
    ========================================================= */
 function renderFaction(){
-  const d = curData();
   document.getElementById('pg-faction').innerHTML = `
   <div class="panel border-deco">
     <div class="panel-title">派 系</div>
-    <div class="panel-sub">结 党 连 枝 · 各 有 阵 营</div>
+    <div class="panel-sub">结 党 连 枝 · 全 站 公 开</div>
     <div class="divider"></div>
-
+    ${isAdmin()?`
     <div class="grid g4" style="margin-bottom:14px;">
-      <div class="field"><label>派 系 名 称</label><input id="fac_name" placeholder="如：清流党"></div>
-      <div class="field"><label>性 质</label><input id="fac_type" placeholder="如：文臣 / 武将 / 后宫"></div>
-      <div class="field"><label>成 员（逗号分隔）</label><input id="fac_members" placeholder="如：沈清梧, 柳氏, 裴大人"></div>
-      <div class="field"><label>简 述</label><input id="fac_desc" placeholder="如：以清正自居，不附权贵"></div>
+      <div class="field"><label>名 称</label><input id="fac_name"></div>
+      <div class="field"><label>性 质</label><input id="fac_type"></div>
+      <div class="field"><label>成 员（逗号分隔）</label><input id="fac_members"></div>
+      <div class="field"><label>简 述</label><input id="fac_desc"></div>
     </div>
     <button class="btn primary" onclick="addFaction()">登 记 派 系</button>
-
-    <div class="divider"></div>
+    <div class="divider"></div>`:''}
     ${DB.factions.length ? DB.factions.map((f,i)=>`
       <div class="faction-block">
         <div class="fh">${esc(f.name)} <span class="tag">${esc(f.type||'未定')}</span>
-          <button class="btn ghost sm" style="margin-left:auto;" onclick="delFaction(${i})">删 除</button>
+          ${isAdmin()?`<button class="btn ghost sm" style="margin-left:auto;" onclick="delItem('factions',${i},'faction')">删 除</button>`:''}
         </div>
         <div style="font-size:13px;color:var(--ink2);margin-bottom:8px;">${esc(f.desc||'—')}</div>
         <div>${(f.members||[]).map(m=>`<span class="member-chip">${esc(m)}</span>`).join('') || '<span style="font-size:12px;opacity:.5;">暂无成员</span>'}</div>
@@ -1350,28 +1180,13 @@ function renderFaction(){
     `).join('') : `<div class="empty">尚无派系记录</div>`}
   </div>`;
 }
-
 function addFaction(){
   const name = document.getElementById('fac_name').value.trim();
   if(!name) return toast('名称不可为空','err');
   const members = document.getElementById('fac_members').value.split(/[,，、\s]+/).filter(Boolean);
-  DB.factions.push({
-    name,
-    type: document.getElementById('fac_type').value.trim(),
-    members,
-    desc: document.getElementById('fac_desc').value.trim(),
-    creator: DB.session,
-    time: nowFull()
-  });
+  DB.factions.push({name, type:document.getElementById('fac_type').value.trim(), members, desc:document.getElementById('fac_desc').value.trim(), time:nowFull()});
   saveDB();
-  toast('派系已登记','ok');
-  go('faction');
-}
-
-function delFaction(i){
-  if(!confirm('确定删除此派系？')) return;
-  DB.factions.splice(i,1);
-  saveDB();
+  toast('已登记','ok');
   go('faction');
 }
 
@@ -1379,22 +1194,21 @@ function renderParty(){
   document.getElementById('pg-party').innerHTML = `
   <div class="panel border-deco">
     <div class="panel-title">党 派</div>
-    <div class="panel-sub">朝 野 分 野 · 势 力 消 长</div>
+    <div class="panel-sub">朝 野 分 野 · 全 站 公 开</div>
     <div class="divider"></div>
-
+    ${isAdmin()?`
     <div class="grid g4" style="margin-bottom:14px;">
-      <div class="field"><label>党 派 名 称</label><input id="par_name" placeholder="如：东宫党"></div>
-      <div class="field"><label>性 质</label><input id="par_type" placeholder="如：太子党 / 中立"></div>
-      <div class="field"><label>成 员（逗号分隔）</label><input id="par_members" placeholder="如：裴大人, 沈清梧"></div>
-      <div class="field"><label>简 述</label><input id="par_desc" placeholder="如：拥立东宫，主张守成"></div>
+      <div class="field"><label>名 称</label><input id="par_name"></div>
+      <div class="field"><label>性 质</label><input id="par_type"></div>
+      <div class="field"><label>成 员（逗号分隔）</label><input id="par_members"></div>
+      <div class="field"><label>简 述</label><input id="par_desc"></div>
     </div>
     <button class="btn primary" onclick="addParty()">登 记 党 派</button>
-
-    <div class="divider"></div>
+    <div class="divider"></div>`:''}
     ${DB.parties.length ? DB.parties.map((f,i)=>`
       <div class="faction-block" style="border-left-color:var(--red);">
         <div class="fh">${esc(f.name)} <span class="tag red">${esc(f.type||'未定')}</span>
-          <button class="btn ghost sm" style="margin-left:auto;" onclick="delParty(${i})">删 除</button>
+          ${isAdmin()?`<button class="btn ghost sm" style="margin-left:auto;" onclick="delItem('parties',${i},'party')">删 除</button>`:''}
         </div>
         <div style="font-size:13px;color:var(--ink2);margin-bottom:8px;">${esc(f.desc||'—')}</div>
         <div>${(f.members||[]).map(m=>`<span class="member-chip">${esc(m)}</span>`).join('') || '<span style="font-size:12px;opacity:.5;">暂无成员</span>'}</div>
@@ -1402,118 +1216,82 @@ function renderParty(){
     `).join('') : `<div class="empty">尚无党派记录</div>`}
   </div>`;
 }
-
 function addParty(){
   const name = document.getElementById('par_name').value.trim();
   if(!name) return toast('名称不可为空','err');
   const members = document.getElementById('par_members').value.split(/[,，、\s]+/).filter(Boolean);
-  DB.parties.push({
-    name,
-    type: document.getElementById('par_type').value.trim(),
-    members,
-    desc: document.getElementById('par_desc').value.trim(),
-    creator: DB.session,
-    time: nowFull()
-  });
+  DB.parties.push({name, type:document.getElementById('par_type').value.trim(), members, desc:document.getElementById('par_desc').value.trim(), time:nowFull()});
   saveDB();
-  toast('党派已登记','ok');
-  go('party');
-}
-
-function delParty(i){
-  if(!confirm('确定删除此党派？')) return;
-  DB.parties.splice(i,1);
-  saveDB();
+  toast('已登记','ok');
   go('party');
 }
 
 /* =========================================================
-   页面：朝堂事件
+   朝堂事件
    ========================================================= */
 function renderEvent(){
   document.getElementById('pg-event').innerHTML = `
   <div class="panel border-deco">
     <div class="panel-title">朝 堂 事 件</div>
-    <div class="panel-sub">风 起 于 青 萍 之 末</div>
+    <div class="panel-sub">风 起 于 青 萍 之 末 · 全 站 公 开</div>
     <div class="divider"></div>
-
+    ${isAdmin()?`
     <div class="grid g4" style="margin-bottom:14px;">
-      <div class="field"><label>事 件 名 称</label><input id="ev_name" placeholder="如：江南水患"></div>
+      <div class="field"><label>名 称</label><input id="ev_name"></div>
       <div class="field"><label>时 间</label><input id="ev_time" value="${now()}"></div>
       <div class="field"><label>性 质</label>
-        <select id="ev_type">
-          <option>天灾</option><option>人祸</option><option>朝议</option>
-          <option>边患</option><option>宫闱</option><option>祥瑞</option><option>其他</option>
-        </select>
+        <select id="ev_type"><option>天灾</option><option>人祸</option><option>朝议</option><option>边患</option><option>宫闱</option><option>祥瑞</option><option>其他</option></select>
       </div>
-      <div class="field"><label>牵涉派系</label><input id="ev_faction" placeholder="如：清流党"></div>
+      <div class="field"><label>牵涉派系</label><input id="ev_faction"></div>
     </div>
-    <div class="field"><label>事 件 详 情</label><textarea id="ev_desc" placeholder="起因、经过、影响……"></textarea></div>
+    <div class="field"><label>详 情</label><textarea id="ev_desc"></textarea></div>
     <button class="btn primary" onclick="addEvent()">记 录 事 件</button>
-
-    <div class="divider"></div>
+    <div class="divider"></div>`:''}
     ${DB.events.length ? `
     <div class="timeline">
-      ${DB.events.map(e=>`
+      ${DB.events.map((e,i)=>`
         <div class="tl-item">
           <div class="tl-time">${esc(e.time)} · <span class="tag ${e.type==='祥瑞'?'jade':'red'}">${esc(e.type)}</span></div>
           <div class="tl-text"><b>${esc(e.name)}</b></div>
           <div style="font-size:13px;color:var(--ink2);line-height:1.9;margin-top:4px;">${esc(e.desc||'')}</div>
           ${e.faction?`<div style="font-size:12px;color:var(--gold2);margin-top:4px;">牵涉：${esc(e.faction)}</div>`:''}
-          ${isAdmin()?`<button class="btn ghost sm" style="margin-top:6px;" onclick="delEvent(${DB.events.indexOf(e)})">删 除</button>`:''}
+          ${isAdmin()?`<button class="btn ghost sm" style="margin-top:6px;" onclick="delItem('events',${i},'event')">删 除</button>`:''}
         </div>
       `).join('')}
     </div>` : `<div class="empty">尚无朝堂事件</div>`}
   </div>`;
 }
-
 function addEvent(){
   const name = document.getElementById('ev_name').value.trim();
-  if(!name) return toast('事件名称不可为空','err');
-  DB.events.unshift({
-    name,
-    time: document.getElementById('ev_time').value.trim(),
-    type: document.getElementById('ev_type').value,
-    faction: document.getElementById('ev_faction').value.trim(),
-    desc: document.getElementById('ev_desc').value.trim(),
-    creator: DB.session
-  });
+  if(!name) return toast('名称不可为空','err');
+  DB.events.unshift({name, time:document.getElementById('ev_time').value.trim(), type:document.getElementById('ev_type').value, faction:document.getElementById('ev_faction').value.trim(), desc:document.getElementById('ev_desc').value.trim()});
   saveDB();
-  toast('事件已记录','ok');
-  go('event');
-}
-
-function delEvent(i){
-  if(!isAdmin()) return toast('无权限','err');
-  if(!confirm('确定删除此事件？')) return;
-  DB.events.splice(i,1);
-  saveDB();
+  toast('已记录','ok');
   go('event');
 }
 
 /* =========================================================
-   页面：群规 / 国史
+   群规 / 国史
    ========================================================= */
 function renderRules(){
   document.getElementById('pg-rules').innerHTML = `
   <div class="panel border-deco">
     <div class="panel-title">群 规</div>
-    <div class="panel-sub">入 卷 必 读 · 请 遵 守</div>
+    <div class="panel-sub">入 卷 必 读</div>
     <div class="divider"></div>
     <div class="prose">${DB.rules}</div>
     ${isAdmin()?`
       <div class="divider"></div>
       <div class="panel-sub">掌 卷 人 编 辑</div>
       <textarea id="rulesEdit" style="min-height:200px;">${esc(DB.rules)}</textarea>
-      <div style="margin-top:10px;"><button class="btn primary" onclick="saveRules()">保 存 群 规</button></div>
-    `:''}
+      <div style="margin-top:10px;"><button class="btn primary" onclick="saveRules()">保 存 群 规</button></div>`:''}
   </div>`;
 }
 function saveRules(){
   if(!isAdmin()) return;
   DB.rules = document.getElementById('rulesEdit').value;
   saveDB();
-  toast('群规已保存','ok');
+  toast('已保存','ok');
   go('rules');
 }
 
@@ -1521,166 +1299,85 @@ function renderHistory(){
   document.getElementById('pg-history').innerHTML = `
   <div class="panel border-deco">
     <div class="panel-title">国 史</div>
-    <div class="panel-sub">昭 朝 纪 事 · 绵 延 千 秋</div>
+    <div class="panel-sub">昭 朝 纪 事</div>
     <div class="divider"></div>
     <div class="prose">${DB.history}</div>
     ${isAdmin()?`
       <div class="divider"></div>
       <div class="panel-sub">掌 卷 人 编 辑</div>
       <textarea id="histEdit" style="min-height:200px;">${esc(DB.history)}</textarea>
-      <div style="margin-top:10px;"><button class="btn primary" onclick="saveHist()">保 存 国 史</button></div>
-    `:''}
+      <div style="margin-top:10px;"><button class="btn primary" onclick="saveHist()">保 存 国 史</button></div>`:''}
   </div>`;
 }
 function saveHist(){
   if(!isAdmin()) return;
   DB.history = document.getElementById('histEdit').value;
   saveDB();
-  toast('国史已保存','ok');
+  toast('已保存','ok');
   go('history');
 }
 
 /* =========================================================
-   页面：我的
+   我的
    ========================================================= */
 function renderMe(){
-  const d = curData();
   const u = cur();
   document.getElementById('pg-me').innerHTML = `
   <div class="panel border-deco">
     <div class="panel-title">我 的</div>
-    <div class="panel-sub">账 号 与 存 档 管 理</div>
+    <div class="panel-sub">账 号 信 息</div>
     <div class="divider"></div>
-
     <div class="grid g2">
       <div class="card">
-        <div class="card-name">账 号 信 息</div>
+        <div class="card-name">账 号</div>
         <div class="card-line"><span>名号</span><b>${esc(DB.session)}</b></div>
-        <div class="card-line"><span>身份</span><b>${u.role==='admin'?'掌卷人（管理员）':'入卷者'}</b></div>
-        <div class="card-line"><span>立卷时间</span><b>${esc(u.createdAt)}</b></div>
-        <div class="card-line"><span>银两</span><b style="color:var(--gold2)">◈ ${d.silver}</b></div>
-        <div class="card-line"><span>积分</span><b>${d.points}</b></div>
+        <div class="card-line"><span>身份</span><b>${u.role==='admin'?'掌卷人':'入卷者'}</b></div>
+        <div class="card-line"><span>立卷</span><b>${esc(u.createdAt)}</b></div>
+        <div class="card-line"><span>积分</span><b>${u.points||0}</b></div>
+        <div class="card-line"><span>当前位份</span><b style="color:var(--red)">${myRank()}</b></div>
       </div>
       <div class="card">
         <div class="card-name">我 的 动 态</div>
-        ${d.log.length ? d.log.slice(0,10).map(l=>`
+        ${(u.log||[]).length ? u.log.slice(0,10).map(l=>`
           <div style="font-size:12.5px;color:var(--ink2);padding:4px 0;border-bottom:1px dashed rgba(140,31,40,.1);">
             <span style="color:var(--gold2);font-size:11px;">${esc(l.time)}</span> · ${esc(l.text)}
-          </div>
-        `).join('') : '<div style="font-size:13px;opacity:.5;">暂无动态</div>'}
+          </div>`).join('') : '<div style="font-size:13px;opacity:.5;">暂无动态</div>'}
       </div>
     </div>
-
     <div class="divider"></div>
-    <div class="panel-sub">存 档 管 理</div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <button class="btn" onclick="exportMe()">导 出 我 的 存 档</button>
-      <button class="btn" onclick="document.getElementById('impFile').click()">导 入 存 档</button>
-      <input type="file" id="impFile" accept=".json" class="hide" onchange="importMe(this)">
-      <button class="btn" onclick="changePwd()">修 改 密 钥</button>
-    </div>
+    <div class="panel-sub">修 改 密 钥</div>
+    <button class="btn" onclick="changePwd()">修 改 密 钥</button>
 
-    <div class="divider"></div>
-    <div class="panel-sub" style="color:var(--red);">危 险 操 作</div>
-    <div style="font-size:13px;color:var(--ink2);line-height:1.9;margin-bottom:12px;">
-      点击下方按钮将<b style="color:var(--red);">清空你个人的全部数值与记录</b>（银两、积分、才艺、谋略、妃彤、眷彤、子嗣、晋位史、购买记录等），
-      使之归于初始。此操作<b style="color:var(--red);">不可撤销</b>，且仅影响你自己的账号，不会影响他人。
-    </div>
-    <button class="btn" style="border-color:var(--red);color:var(--red);" onclick="resetSelf()">一 切 重 置</button>
     ${isAdmin()?`
       <div class="divider"></div>
-      <div class="panel-sub">掌 卷 人 专 区</div>
-      <div style="font-size:13px;color:var(--ink2);line-height:1.9;margin-bottom:12px;">
-        可查看全部入卷者名单与数据概况。
-      </div>
-      <button class="btn" onclick="go('adminview')" ${true?'':'disabled'}>查 看 全 员 名 册</button>
-      <div id="adminBox" style="margin-top:16px;"></div>
+      <div class="panel-sub">掌 卷 人 · 全 员 名 册</div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>名号</th><th>身份</th><th>积分</th><th>立卷</th></tr></thead>
+        <tbody>${Object.keys(DB.users).map(n=>{
+          const uu = DB.users[n];
+          return `<tr><td><b style="color:var(--ink)">${esc(n)}</b></td>
+            <td>${uu.role==='admin'?'掌卷人':'入卷者'}</td>
+            <td>${uu.points||0}</td>
+            <td style="font-size:11px;">${esc(uu.createdAt)}</td></tr>`;
+        }).join('')}</tbody>
+      </table></div>
     `:''}
   </div>`;
-  if(isAdmin()) renderAdminBox();
 }
-
-function renderAdminBox(){
-  const box = document.getElementById('adminBox');
-  if(!box) return;
-  const names = Object.keys(DB.users);
-  box.innerHTML = `
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead><tr><th>名号</th><th>身份</th><th>银两</th><th>积分</th><th>才艺</th><th>谋略</th><th>立卷</th></tr></thead>
-        <tbody>
-          ${names.map(n=>{
-            const u = DB.users[n];
-            return `<tr>
-              <td><b style="color:var(--ink)">${esc(n)}</b></td>
-              <td>${u.role==='admin'?'掌卷人':'入卷者'}</td>
-              <td>${u.data.silver}</td><td>${u.data.points}</td>
-              <td>${u.data.stats.才艺}</td><td>${u.data.stats.谋略}</td>
-              <td style="font-size:11px;">${esc(u.createdAt)}</td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>
-    </div>`;
-}
-
-function exportMe(){
-  const u = cur();
-  const blob = new Blob([JSON.stringify({name:DB.session, user:u}, null, 2)], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `千秋岁引_${DB.session}_${now()}.json`;
-  a.click();
-  URL.revokeObjectURL(a.href);
-  toast('存档已导出','ok');
-}
-
-function importMe(input){
-  const f = input.files[0];
-  if(!f) return;
-  const r = new FileReader();
-  r.onload = e=>{
-    try{
-      const obj = JSON.parse(e.target.result);
-      if(!obj.user || !obj.user.data) throw new Error('格式错误');
-      if(!confirm('导入将覆盖当前账号的全部数据，确定继续？')) return;
-      cur().data = obj.user.data;
-      saveDB();
-      toast('存档已导入','ok');
-      go('me');
-      refreshTop();
-    }catch(err){
-      toast('文件格式有误','err');
-    }
-  };
-  r.readAsText(f);
-  input.value = '';
-}
-
 function changePwd(){
   const np = prompt('请输入新的密钥（至少4位）：');
   if(np === null) return;
   if(np.length < 4) return toast('密钥至少4位','err');
   cur().pwd = np;
   saveDB();
-  toast('密钥已修改','ok');
-}
-
-function resetSelf(){
-  if(!confirm('确定要清空你的全部数值与记录吗？')) return;
-  if(!confirm('再次确认：此操作不可撤销，一切将归于初始。')) return;
-  const u = cur();
-  u.data = newUserData();
-  saveDB();
-  toast('已重置，一切归零','ok');
-  go('me');
-  refreshTop();
+  toast('已修改','ok');
 }
 
 /* =========================================================
    启动
    ========================================================= */
-(function init(){
+(async function init(){
+  await loadDB();
   if(DB.session && DB.users[DB.session]){
     enterSite();
   }else{
@@ -1688,12 +1385,10 @@ function resetSelf(){
     document.getElementById('loginView').classList.remove('hide');
     document.getElementById('app').classList.add('hide');
   }
-  // 回车快捷登录
   document.getElementById('loginPwd').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
   document.getElementById('regPwd2').addEventListener('keydown', e=>{ if(e.key==='Enter') doRegister(); });
 })();
 
-/* 点击遮罩关闭弹窗 */
 document.getElementById('modalMask').addEventListener('click', e=>{
   if(e.target.id === 'modalMask') e.target.classList.remove('show');
 });
