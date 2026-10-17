@@ -197,7 +197,7 @@ var ADMIN_KEY = 'QIANQIU2026';
 var DB_ID = 'main';
 
 /* ======================= 默认内容 ======================= */
-var DEFAULT_RULES = '<h4>一、入卷之礼</h4><p>凡入【千秋岁引】者，先注册名号。掌卷人负责录入妃眷档案，普通入卷者仅查看。</p><h4>二、档案公开</h4><p>本卷所有档案、妃彤、眷彤、子嗣、晋位、派系、党派、朝堂事件，皆为公开信息，所有入卷者皆可查看。</p><h4>三、日常修习</h4><p>每日可于「才艺培养」中修习三次，每次所得一至八点。谋略值每日可卜算两次，所得负五至正五。</p><h4>四、市易</h4><p>黑市货品仅供查看，站内不设购买。</p><h4>五、卷宗之重</h4><p>本站数值一经记录，永久留存。<b>唯有本人主动点击「一切重置」，方可使自身数值归零。</b></p>';
+var DEFAULT_RULES = '<h4>一、入卷之礼</h4><p>凡入【千秋岁引】者，先注册名号。掌卷人负责录入妃眷档案，普通入卷者仅查看。</p><h4>二、档案公开</h4><p>本卷所有档案、妃彤、眷彤、子嗣、晋位、派系、党派、朝堂事件，皆为公开信息，所有入卷者皆可查看。</p><h4>三、日常修习</h4><p>每日可于「才艺培养」中修习三次，每次所得一至八点。谋略值每日可卜算两次，所得负五至正五。所得数值将自动累加到同名档案中。</p><h4>四、市易</h4><p>黑市货品仅供查看，站内不设购买。</p><h4>五、卷宗之重</h4><p>本站数值一经记录，永久留存。<b>唯有本人主动点击「一切重置」，方可使自身数值归零。</b></p>';
 
 var DEFAULT_HISTORY = '<h4>卷一 · 开国</h4><p>昔年烽火连天，旧朝倾颓。太祖提三尺剑，定鼎中原，改元「承光」，立国号为「昭」。昭朝初立，百废待兴，宫中规制亦自此始。</p><h4>卷二 · 承光之治</h4><p>承光年间，轻徭薄赋，四海升平。后宫设六局一司，掌妃嫔位份、彤史、子嗣、库银诸事，是为今日宫群档案之雏形。</p><h4>卷三 · 今朝</h4><p>今上御极，年号「千秋」。千秋岁引，取岁月绵长、宫闱延引之意。凡入此卷者，皆为千秋一页。</p><p style="text-align:center;color:var(--gold2);letter-spacing:.3em;margin-top:24px;">— 未完待续 —</p>';
 
@@ -495,7 +495,7 @@ function refreshTop(){
 
 /* ======================= 人物档案 ======================= */
 function emptyArchive(){
-  return {id:'',name:'',xiaozi:'',age:'',birthday:'',family:'',identity:'',appearance:'',constitution:'',goodAt:'',skill1:'',skill2:'',skill3:'',party:'',faction:'',lifespan:'',palace:'',wisdom:'',pregnancy:'',marriage:'',rank:'',skin:'',createdAt:'',updatedAt:''};
+  return {id:'',name:'',xiaozi:'',age:'',birthday:'',family:'',identity:'',appearance:'',constitution:'',goodAt:'',talent:0,strategy:0,party:'',faction:'',lifespan:'',palace:'',pregnancy:'',marriage:'',rank:'',skin:'',createdAt:'',updatedAt:''};
 }
 
 function renderArchive(){
@@ -509,6 +509,8 @@ function renderArchive(){
       html += '<div class="card-name">' + esc(a.name||'未命名') + ' <span class="tag red">' + esc(a.rank||'待定') + '</span></div>';
       html += '<div class="card-line"><span>小字</span><b>' + esc(a.xiaozi||'—') + '</b></div>';
       html += '<div class="card-line"><span>年岁</span><b>' + esc(a.age||'—') + '</b></div>';
+      html += '<div class="card-line"><span>才艺</span><b style="color:var(--gold2)">' + (a.talent||0) + '</b></div>';
+      html += '<div class="card-line"><span>谋略</span><b style="color:var(--jade)">' + (a.strategy||0) + '</b></div>';
       html += '<div class="card-line"><span>党派</span><b>' + esc(a.party||'—') + '</b></div>';
       html += '<div class="card-line"><span>派系</span><b>' + esc(a.faction||'—') + '</b></div>';
       html += '<div class="card-line"><span>住处</span><b>' + esc(a.palace||'—') + '</b></div>';
@@ -520,7 +522,7 @@ function renderArchive(){
   }
   if(isAdmin()){
     html += '<div class="divider"></div><div class="panel-sub">掌 卷 人 录 入</div>';
-    html += '<div style="font-size:13px;color:var(--ink2);margin-bottom:12px;">录入后全站可见。名讳一栏禁止使用「檀」字。</div>';
+    html += '<div style="font-size:13px;color:var(--ink2);margin-bottom:12px;">录入后全站可见。玩家抽签所得才艺、谋略会自动累加至同名档案。</div>';
     html += '<button type="button" class="btn primary" onclick="openEditArchive(\'\')">+ 新 增 妃 眷 档 案</button>';
   }
   html += '</div>';
@@ -546,18 +548,15 @@ function viewArchive(id){
   html += '<div class="card-line"><span>容貌</span><b>' + esc(a.appearance||'—') + '</b></div>';
   html += '<div class="card-line"><span>体质</span><b>' + esc(a.constitution||'—') + '</b></div>';
   html += '<div class="card-line"><span>擅长</span><b>' + esc(a.goodAt||'—') + '</b></div>';
-  html += '<div class="card-line"><span>才艺一</span><b>' + esc(a.skill1||'—') + '</b></div>';
-  html += '<div class="card-line"><span>才艺二</span><b>' + esc(a.skill2||'—') + '</b></div>';
-  html += '<div class="card-line"><span>才艺三</span><b>' + esc(a.skill3||'—') + '</b></div>';
   html += '</div><div>';
+  html += '<div class="card-line"><span>才艺 (值)</span><b style="color:var(--gold2);font-size:15px;">' + (a.talent||0) + '</b></div>';
+  html += '<div class="card-line"><span>谋略 (值)</span><b style="color:var(--jade);font-size:15px;">' + (a.strategy||0) + '</b></div>';
   html += '<div class="card-line"><span>党派</span><b>' + esc(a.party||'—') + '</b></div>';
   html += '<div class="card-line"><span>派系</span><b>' + esc(a.faction||'—') + '</b></div>';
   html += '<div class="card-line"><span>寿命</span><b>' + esc(a.lifespan||'—') + '</b></div>';
   html += '<div class="card-line"><span>住处</span><b>' + esc(a.palace||'—') + '</b></div>';
-  html += '<div class="card-line"><span>谋略</span><b>' + esc(a.wisdom||'—') + '</b></div>';
   html += '<div class="card-line"><span>孕绝</span><b>' + esc(a.pregnancy||'—') + '</b></div>';
   html += '<div class="card-line"><span>婚配</span><b>' + esc(a.marriage||'—') + '</b></div>';
-  html += '<div class="card-line"><span>位份</span><b>' + esc(a.rank||'—') + '</b></div>';
   html += '<div class="card-line"><span>皮相</span><b>' + esc(a.skin||'—') + '</b></div>';
   html += '</div></div><div class="divider"></div>';
   html += '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">';
@@ -575,9 +574,9 @@ function openEditArchive(id){
   var a = isNew ? emptyArchive() : DB.archives[id];
   if(!a) return;
   var html = '<h3>' + (isNew ? '新 增 妃 眷 档 案' : '修 改 档 案') + '</h3>';
-  html += '<div class="panel-sub" style="text-align:center;">录入后全站公开可见 · 名讳禁「檀」</div><div class="divider"></div>';
+  html += '<div class="panel-sub" style="text-align:center;">录入后全站公开可见</div><div class="divider"></div>';
   html += '<div class="grid g2">';
-  html += '<div class="field"><label>名 讳（禁檀）*</label><input id="ea_name" value="' + esc(a.name) + '" placeholder="不得含「檀」字"></div>';
+  html += '<div class="field"><label>名 讳 *</label><input id="ea_name" value="' + esc(a.name) + '"></div>';
   html += '<div class="field"><label>小 字</label><input id="ea_xiaozi" value="' + esc(a.xiaozi) + '"></div>';
   html += '<div class="field"><label>年 岁</label><input id="ea_age" value="' + esc(a.age) + '" placeholder="如：16+"></div>';
   html += '<div class="field"><label>生 辰</label><input id="ea_birthday" value="' + esc(a.birthday) + '"></div>';
@@ -586,14 +585,12 @@ function openEditArchive(id){
   html += '<div class="field"><label>容 貌</label><input id="ea_appearance" value="' + esc(a.appearance) + '"></div>';
   html += '<div class="field"><label>体 质</label><input id="ea_constitution" value="' + esc(a.constitution) + '"></div>';
   html += '<div class="field"><label>擅 长（限五）</label><input id="ea_goodAt" value="' + esc(a.goodAt) + '"></div>';
-  html += '<div class="field"><label>才 艺 一</label><input id="ea_skill1" value="' + esc(a.skill1) + '"></div>';
-  html += '<div class="field"><label>才 艺 二</label><input id="ea_skill2" value="' + esc(a.skill2) + '"></div>';
-  html += '<div class="field"><label>才 艺 三</label><input id="ea_skill3" value="' + esc(a.skill3) + '"></div>';
+  html += '<div class="field"><label>才 艺 总 值</label><input id="ea_talent" type="number" value="' + (a.talent||0) + '"></div>';
+  html += '<div class="field"><label>谋 略 总 值</label><input id="ea_strategy" type="number" value="' + (a.strategy||0) + '"></div>';
   html += '<div class="field"><label>党 派</label><input id="ea_party" value="' + esc(a.party) + '" placeholder="珹王党 / 皇帝党"></div>';
   html += '<div class="field"><label>派 系</label><input id="ea_faction" value="' + esc(a.faction) + '" placeholder="权 / 宠 / 中立"></div>';
   html += '<div class="field"><label>寿 命</label><input id="ea_lifespan" value="' + esc(a.lifespan) + '"></div>';
   html += '<div class="field"><label>住 处</label><input id="ea_palace" value="' + esc(a.palace) + '"></div>';
-  html += '<div class="field"><label>谋 略</label><input id="ea_wisdom" value="' + esc(a.wisdom) + '"></div>';
   html += '<div class="field"><label>孕 绝</label><input id="ea_pregnancy" value="' + esc(a.pregnancy) + '"></div>';
   html += '<div class="field"><label>婚 配</label><input id="ea_marriage" value="' + esc(a.marriage) + '" placeholder="皇帝 / 珹王 / 瑨王"></div>';
   html += '<div class="field"><label>位 份</label><input id="ea_rank" value="' + esc(a.rank) + '"></div>';
@@ -609,7 +606,6 @@ function saveArchive(id){
   function g(i){ var el = document.getElementById(i); return el ? el.value.trim() : ''; }
   var name = g('ea_name');
   if(!name) return toast('名讳不可为空','err');
-  if(name.indexOf('檀') !== -1) return toast('名讳禁止使用「檀」字','err');
   var isNew = !id;
   if(isNew){
     var newId = newArchiveId();
@@ -617,10 +613,10 @@ function saveArchive(id){
       id: newId, name: name,
       xiaozi: g('ea_xiaozi'), age: g('ea_age'), birthday: g('ea_birthday'),
       family: g('ea_family'), identity: g('ea_identity'), appearance: g('ea_appearance'),
-      constitution: g('ea_constitution'),
-      goodAt: g('ea_goodAt'), skill1: g('ea_skill1'), skill2: g('ea_skill2'), skill3: g('ea_skill3'),
+      constitution: g('ea_constitution'), goodAt: g('ea_goodAt'), 
+      talent: parseInt(g('ea_talent'))||0, strategy: parseInt(g('ea_strategy'))||0,
       party: g('ea_party'), faction: g('ea_faction'), lifespan: g('ea_lifespan'),
-      palace: g('ea_palace'), wisdom: g('ea_wisdom'), pregnancy: g('ea_pregnancy'),
+      palace: g('ea_palace'), pregnancy: g('ea_pregnancy'),
       marriage: g('ea_marriage'), rank: g('ea_rank'), skin: g('ea_skin'),
       createdAt: nowFull(), updatedAt: nowFull()
     };
@@ -631,10 +627,10 @@ function saveArchive(id){
     var beforeRank = a.rank;
     a.name = name; a.xiaozi = g('ea_xiaozi'); a.age = g('ea_age'); a.birthday = g('ea_birthday');
     a.family = g('ea_family'); a.identity = g('ea_identity'); a.appearance = g('ea_appearance');
-    a.constitution = g('ea_constitution');
-    a.goodAt = g('ea_goodAt'); a.skill1 = g('ea_skill1'); a.skill2 = g('ea_skill2'); a.skill3 = g('ea_skill3');
+    a.constitution = g('ea_constitution'); a.goodAt = g('ea_goodAt'); 
+    a.talent = parseInt(g('ea_talent'))||0; a.strategy = parseInt(g('ea_strategy'))||0;
     a.party = g('ea_party'); a.faction = g('ea_faction'); a.lifespan = g('ea_lifespan');
-    a.palace = g('ea_palace'); a.wisdom = g('ea_wisdom'); a.pregnancy = g('ea_pregnancy');
+    a.palace = g('ea_palace'); a.pregnancy = g('ea_pregnancy');
     a.marriage = g('ea_marriage'); a.rank = g('ea_rank'); a.skin = g('ea_skin');
     a.updatedAt = nowFull();
     if(beforeRank && a.rank && beforeRank !== a.rank){
@@ -658,6 +654,17 @@ function deleteArchive(id){
   go('archive');
 }
 
+/* ======================= 联动修改档案数值函数 ======================= */
+function addStatToArchive(name, statKey, amount) {
+  var archId = Object.keys(DB.archives).find(function(k){ return DB.archives[k].name === name; });
+  if(archId) {
+    DB.archives[archId][statKey] = (DB.archives[archId][statKey] || 0) + amount;
+    DB.archives[archId].updatedAt = nowFull();
+    return true;
+  }
+  return false;
+}
+
 /* ======================= 才艺培养 ======================= */
 var SKILL_NAMES = ['琴','棋','书','画','舞','歌','诗','绣','茶','香'];
 
@@ -666,11 +673,11 @@ function renderSkill(){
   var today = now();
   var todayCount = (u.skills||[]).filter(function(s){ return s.date === today; }).length;
   var html = '<div class="panel border-deco"><div class="panel-title">才艺培养</div>';
-  html += '<div class="panel-sub">抽 签 定 得 · 每 日 三 次 · 每 次 +1~8</div><div class="divider"></div>';
+  html += '<div class="panel-sub">抽 签 定 得 · 每 日 三 次 · 每 次 +1~8 · 同步至档案</div><div class="divider"></div>';
   html += '<div class="grid g3" style="margin-bottom:20px;">';
   html += '<div class="card" style="text-align:center;"><div style="font-size:12px;color:var(--ink2);">今日已修习</div><div style="font-size:30px;color:var(--red);font-weight:600;">' + todayCount + ' / 3</div></div>';
   html += '<div class="card" style="text-align:center;"><div style="font-size:12px;color:var(--ink2);">累计修习</div><div style="font-size:30px;color:var(--gold2);font-weight:600;">' + (u.skills||[]).length + '</div></div>';
-  html += '<div class="card" style="text-align:center;"><div style="font-size:12px;color:var(--ink2);">积分</div><div style="font-size:30px;color:var(--jade);font-weight:600;">' + (u.points||0) + '</div></div>';
+  html += '<div class="card" style="text-align:center;"><div style="font-size:12px;color:var(--ink2);">后台积分</div><div style="font-size:30px;color:var(--jade);font-weight:600;">' + (u.points||0) + '</div></div>';
   html += '</div>';
   html += '<div style="text-align:center;margin:26px 0;">';
   if(todayCount >= 3){
@@ -703,7 +710,8 @@ function drawSkill(){
   showDrawModal('才 艺 抽 签', sk, '勤修不辍，日有所进。', gain, function(){
     u.points = (u.points||0) + gain;
     u.skills.unshift({time: nowFull(), date: today, name: sk, gain: gain});
-    pushLog('修习「' + sk + '」，+' + gain);
+    var synced = addStatToArchive(DB.session, 'talent', gain);
+    pushLog('修习「' + sk + '」，+' + gain + (synced ? ' (已更新档案)' : ' (无同名档案)'));
     saveDB();
     refreshTop();
     go('skill');
@@ -716,11 +724,11 @@ function renderWisdom(){
   var today = now();
   var todayCount = (u.wisdomLog||[]).filter(function(s){ return s.date === today; }).length;
   var html = '<div class="panel border-deco"><div class="panel-title">谋 略 值</div>';
-  html += '<div class="panel-sub">抽 签 卜 算 · 每 日 两 次 · 所 得 -5 ~ +5</div><div class="divider"></div>';
+  html += '<div class="panel-sub">抽 签 卜 算 · 每 日 两 次 · 所 得 -5 ~ +5 · 同步至档案</div><div class="divider"></div>';
   html += '<div class="grid g3" style="margin-bottom:20px;">';
   html += '<div class="card" style="text-align:center;"><div style="font-size:12px;color:var(--ink2);">今日已卜</div><div style="font-size:30px;color:var(--red);font-weight:600;">' + todayCount + ' / 2</div></div>';
   html += '<div class="card" style="text-align:center;"><div style="font-size:12px;color:var(--ink2);">累计卜算</div><div style="font-size:30px;color:var(--gold2);font-weight:600;">' + (u.wisdomLog||[]).length + '</div></div>';
-  html += '<div class="card" style="text-align:center;"><div style="font-size:12px;color:var(--ink2);">积分</div><div style="font-size:30px;color:var(--jade);font-weight:600;">' + (u.points||0) + '</div></div>';
+  html += '<div class="card" style="text-align:center;"><div style="font-size:12px;color:var(--ink2);">后台积分</div><div style="font-size:30px;color:var(--jade);font-weight:600;">' + (u.points||0) + '</div></div>';
   html += '</div>';
   html += '<div style="text-align:center;margin:26px 0;">';
   if(todayCount >= 2){
@@ -755,7 +763,8 @@ function drawWisdom(){
   showDrawModal('谋 略 卜 算', (gain >= 0 ? '+' : '') + gain, desc, null, function(){
     u.points = (u.points||0) + gain;
     u.wisdomLog.unshift({time: nowFull(), date: today, gain: gain});
-    pushLog('卜算，谋略 ' + (gain >= 0 ? '+' : '') + gain);
+    var synced = addStatToArchive(DB.session, 'strategy', gain);
+    pushLog('卜算，谋略 ' + (gain >= 0 ? '+' : '') + gain + (synced ? ' (已更新档案)' : ' (无同名档案)'));
     saveDB();
     refreshTop();
     go('wisdom');
@@ -892,7 +901,7 @@ function addJuanTong(){
   go('juantong');
 }
 
-/* ======================= 子嗣册（加世子郡主） ======================= */
+/* ======================= 子嗣册 ======================= */
 function renderChildren(){
   var list = DB.children;
   var html = '<div class="panel border-deco"><div class="panel-title">子 嗣 册</div>';
@@ -1031,7 +1040,7 @@ function renderShop(){
   document.getElementById('pg-shop').innerHTML = html;
 }
 
-/* ======================= 地图（可加地点） ======================= */
+/* ======================= 地图 ======================= */
 var mapTab = 'in';
 
 function renderMap(){
@@ -1096,7 +1105,7 @@ function delMapLocation(idx){
   go('map');
 }
 
-/* ======================= 派系（可加人） ======================= */
+/* ======================= 派系 ======================= */
 function renderFaction(){
   var html = '<div class="panel border-deco"><div class="panel-title">派 系</div>';
   html += '<div class="panel-sub">结 党 连 枝 · 全 站 公 开</div><div class="divider"></div>';
@@ -1181,7 +1190,7 @@ function removeFactionMember(idx, mIdx){
   go('faction');
 }
 
-/* ======================= 党派（可加人） ======================= */
+/* ======================= 党派 ======================= */
 function renderParty(){
   var html = '<div class="panel border-deco"><div class="panel-title">党 派</div>';
   html += '<div class="panel-sub">朝 野 分 野 · 全 站 公 开</div><div class="divider"></div>';
@@ -1369,7 +1378,7 @@ function renderMe(){
   html += '<div class="card-line"><span>名号</span><b>' + esc(DB.session) + '</b></div>';
   html += '<div class="card-line"><span>身份</span><b>' + (u.role === 'admin' ? '掌卷人' : '入卷者') + '</b></div>';
   html += '<div class="card-line"><span>立卷</span><b>' + esc(u.createdAt) + '</b></div>';
-  html += '<div class="card-line"><span>积分</span><b>' + (u.points||0) + '</b></div>';
+  html += '<div class="card-line"><span>后台积分</span><b>' + (u.points||0) + '</b></div>';
   html += '<div class="card-line"><span>当前位份</span><b style="color:var(--red)">' + myRank() + '</b></div>';
   html += '</div>';
   html += '<div class="card"><div class="card-name">我 的 动 态</div>';
