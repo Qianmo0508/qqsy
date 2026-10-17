@@ -1421,15 +1421,16 @@ function changePwd(){
 function init(){
   var tip = document.getElementById('readyTip');
   if(tip) tip.textContent = '正在连接云端……';
+  
   loadDB(function(err){
-    if(tip) tip.textContent = err ? '云端连接失败，以本地模式运行' : '系统已就绪';
-    if(DB && DB.session && DB.users[DB.session]){
-      enterSite();
-    }else{
-      if(DB) DB.session = null;
-      document.getElementById('loginView').classList.remove('hide');
-      document.getElementById('app').classList.add('hide');
-    }
+    if(tip) tip.textContent = err ? '云端连接失败，请刷新重试' : '系统已就绪';
+    
+    // 【重要】每次打开，先强制清空 session，绝不自动登录
+    if(DB) DB.session = null;
+    
+    document.getElementById('loginView').classList.remove('hide');
+    document.getElementById('app').classList.add('hide');
+    
     var lp = document.getElementById('loginPwd');
     if(lp) lp.addEventListener('keydown', function(e){ if(e.key === 'Enter') doLogin(); });
     var rp = document.getElementById('regPwd2');
