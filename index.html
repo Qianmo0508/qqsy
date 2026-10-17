@@ -495,7 +495,7 @@ function refreshTop(){
 
 /* ======================= 人物档案 ======================= */
 function emptyArchive(){
-  return {id:'',name:'',xiaozi:'',age:'',birthday:'',family:'',identity:'',appearance:'',constitution:'',personality:'',goodAt:'',skill1:'',skill2:'',skill3:'',party:'',faction:'',lifespan:'',palace:'',wisdom:'',pregnancy:'',marriage:'',rank:'',skin:'',createdAt:'',updatedAt:''};
+  return {id:'',name:'',xiaozi:'',age:'',birthday:'',family:'',identity:'',appearance:'',constitution:'',goodAt:'',skill1:'',skill2:'',skill3:'',party:'',faction:'',lifespan:'',palace:'',wisdom:'',pregnancy:'',marriage:'',rank:'',skin:'',createdAt:'',updatedAt:''};
 }
 
 function renderArchive(){
@@ -545,7 +545,6 @@ function viewArchive(id){
   html += '<div class="card-line"><span>身份</span><b>' + esc(a.identity||'—') + '</b></div>';
   html += '<div class="card-line"><span>容貌</span><b>' + esc(a.appearance||'—') + '</b></div>';
   html += '<div class="card-line"><span>体质</span><b>' + esc(a.constitution||'—') + '</b></div>';
-  html += '<div class="card-line"><span>性情</span><b>' + esc(a.personality||'—') + '</b></div>';
   html += '<div class="card-line"><span>擅长</span><b>' + esc(a.goodAt||'—') + '</b></div>';
   html += '<div class="card-line"><span>才艺一</span><b>' + esc(a.skill1||'—') + '</b></div>';
   html += '<div class="card-line"><span>才艺二</span><b>' + esc(a.skill2||'—') + '</b></div>';
@@ -586,7 +585,6 @@ function openEditArchive(id){
   html += '<div class="field"><label>身 份</label><input id="ea_identity" value="' + esc(a.identity) + '" placeholder="嫡/庶/养/义"></div>';
   html += '<div class="field"><label>容 貌</label><input id="ea_appearance" value="' + esc(a.appearance) + '"></div>';
   html += '<div class="field"><label>体 质</label><input id="ea_constitution" value="' + esc(a.constitution) + '"></div>';
-  html += '<div class="field"><label>性 情</label><input id="ea_personality" value="' + esc(a.personality) + '"></div>';
   html += '<div class="field"><label>擅 长（限五）</label><input id="ea_goodAt" value="' + esc(a.goodAt) + '"></div>';
   html += '<div class="field"><label>才 艺 一</label><input id="ea_skill1" value="' + esc(a.skill1) + '"></div>';
   html += '<div class="field"><label>才 艺 二</label><input id="ea_skill2" value="' + esc(a.skill2) + '"></div>';
@@ -619,7 +617,7 @@ function saveArchive(id){
       id: newId, name: name,
       xiaozi: g('ea_xiaozi'), age: g('ea_age'), birthday: g('ea_birthday'),
       family: g('ea_family'), identity: g('ea_identity'), appearance: g('ea_appearance'),
-      constitution: g('ea_constitution'), personality: g('ea_personality'),
+      constitution: g('ea_constitution'),
       goodAt: g('ea_goodAt'), skill1: g('ea_skill1'), skill2: g('ea_skill2'), skill3: g('ea_skill3'),
       party: g('ea_party'), faction: g('ea_faction'), lifespan: g('ea_lifespan'),
       palace: g('ea_palace'), wisdom: g('ea_wisdom'), pregnancy: g('ea_pregnancy'),
@@ -633,7 +631,7 @@ function saveArchive(id){
     var beforeRank = a.rank;
     a.name = name; a.xiaozi = g('ea_xiaozi'); a.age = g('ea_age'); a.birthday = g('ea_birthday');
     a.family = g('ea_family'); a.identity = g('ea_identity'); a.appearance = g('ea_appearance');
-    a.constitution = g('ea_constitution'); a.personality = g('ea_personality');
+    a.constitution = g('ea_constitution');
     a.goodAt = g('ea_goodAt'); a.skill1 = g('ea_skill1'); a.skill2 = g('ea_skill2'); a.skill3 = g('ea_skill3');
     a.party = g('ea_party'); a.faction = g('ea_faction'); a.lifespan = g('ea_lifespan');
     a.palace = g('ea_palace'); a.wisdom = g('ea_wisdom'); a.pregnancy = g('ea_pregnancy');
@@ -845,7 +843,7 @@ function addFeiTong(){
   go('feitong');
 }
 
-/* ======================= 眷彤（加王爷选项） ======================= */
+/* ======================= 眷彤 ======================= */
 function renderJuanTong(){
   var list = DB.juanTong;
   var html = '<div class="panel border-deco"><div class="panel-title">眷 彤</div>';
@@ -894,7 +892,7 @@ function addJuanTong(){
   go('juantong');
 }
 
-/* ======================= 子嗣册 ======================= */
+/* ======================= 子嗣册（加世子郡主） ======================= */
 function renderChildren(){
   var list = DB.children;
   var html = '<div class="panel border-deco"><div class="panel-title">子 嗣 册</div>';
@@ -902,7 +900,7 @@ function renderChildren(){
   if(isAdmin()){
     html += '<div class="grid g4" style="margin-bottom:18px;">';
     html += '<div class="field"><label>姓 名</label><input id="ch_name"></div>';
-    html += '<div class="field"><label>性 别</label><select id="ch_sex"><option>皇子</option><option>公主</option></select></div>';
+    html += '<div class="field"><label>身 份 / 性 别</label><select id="ch_sex"><option>皇子</option><option>公主</option><option>世子</option><option>郡主</option></select></div>';
     html += '<div class="field"><label>生 母</label><input id="ch_mother"></div>';
     html += '<div class="field"><label>出 生 日</label><input id="ch_date" value="' + now() + '"></div>';
     html += '<div class="field"><label>序 齿</label><input id="ch_order"></div>';
@@ -916,7 +914,8 @@ function renderChildren(){
     for(var i = 0; i < list.length; i++){
       var c = list[i];
       html += '<div class="card">';
-      html += '<div class="card-name">' + esc(c.name) + ' <span class="tag ' + (c.sex === '皇子' ? 'red' : 'jade') + '">' + esc(c.sex) + '</span></div>';
+      var sexTag = (c.sex === '皇子' || c.sex === '世子') ? 'red' : 'jade';
+      html += '<div class="card-name">' + esc(c.name) + ' <span class="tag ' + sexTag + '">' + esc(c.sex) + '</span></div>';
       html += '<div class="card-line"><span>序齿</span><b>' + esc(c.order||'—') + '</b></div>';
       html += '<div class="card-line"><span>生母</span><b>' + esc(c.mother||'—') + '</b></div>';
       html += '<div class="card-line"><span>封号</span><b>' + esc(c.title||'—') + '</b></div>';
@@ -1032,7 +1031,7 @@ function renderShop(){
   document.getElementById('pg-shop').innerHTML = html;
 }
 
-/* ======================= 地图 ======================= */
+/* ======================= 地图（可加地点） ======================= */
 var mapTab = 'in';
 
 function renderMap(){
@@ -1043,6 +1042,16 @@ function renderMap(){
   html += '<button type="button" class="map-tab ' + (mapTab === 'in' ? 'active' : '') + '" onclick="switchMap(\'in\')">宫 内</button>';
   html += '<button type="button" class="map-tab ' + (mapTab === 'out' ? 'active' : '') + '" onclick="switchMap(\'out\')">宫 外</button>';
   html += '</div>';
+  
+  if(isAdmin()){
+    html += '<div class="grid g4" style="margin-bottom:18px;background:rgba(201,169,97,.06);padding:12px;border-radius:4px;">';
+    html += '<div class="field" style="margin-bottom:0;"><label>新地点名称</label><input id="map_new_name" placeholder="如：毓秀宫"></div>';
+    html += '<div class="field" style="margin-bottom:0;"><label>居住者 / 主人</label><input id="map_new_owner" placeholder="留空为无主"></div>';
+    html += '<div class="field" style="margin-bottom:0;"><label>描述</label><input id="map_new_desc" placeholder="如：新修宫殿"></div>';
+    html += '<div class="field" style="margin-bottom:0;display:flex;align-items:flex-end;"><button type="button" class="btn primary" style="width:100%;" onclick="addMapLocation()">+ 添 加 地 点</button></div>';
+    html += '</div>';
+  }
+
   html += '<div class="map-grid">';
   for(var i = 0; i < list.length; i++){
     var m = list[i];
@@ -1050,6 +1059,9 @@ function renderMap(){
     html += '<div class="mn">' + esc(m.name) + '</div>';
     html += '<div class="mo">' + esc(m.owner || '空置') + '</div>';
     html += '<div class="mo" style="opacity:.55;font-size:10px;margin-top:4px;">' + esc(m.desc) + '</div>';
+    if(isAdmin()) {
+      html += '<div class="x" style="position:absolute;top:4px;right:8px;z-index:2;cursor:pointer;color:var(--red);font-weight:700;" onclick="delMapLocation(' + i + ')">×</div>';
+    }
     html += '</div>';
   }
   html += '</div></div>';
@@ -1059,6 +1071,29 @@ function renderMap(){
 function switchMap(t){
   mapTab = t;
   renderMap();
+}
+
+function addMapLocation(){
+  if(!isAdmin()) return toast('无权限','err');
+  var name = document.getElementById('map_new_name').value.trim();
+  if(!name) return toast('地点名称不可为空','err');
+  var owner = document.getElementById('map_new_owner').value.trim() || '—';
+  var desc = document.getElementById('map_new_desc').value.trim();
+  var target = mapTab === 'in' ? DB.mapIn : DB.mapOut;
+  target.push({name: name, owner: owner, desc: desc});
+  saveDB();
+  toast('已添加地点','ok');
+  go('map');
+}
+
+function delMapLocation(idx){
+  if(!isAdmin()) return toast('无权限','err');
+  if(!confirm('确定删除此地点？')) return;
+  var target = mapTab === 'in' ? DB.mapIn : DB.mapOut;
+  target.splice(idx, 1);
+  saveDB();
+  toast('已删除','ok');
+  go('map');
 }
 
 /* ======================= 派系（可加人） ======================= */
