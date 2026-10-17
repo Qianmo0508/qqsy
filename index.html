@@ -495,7 +495,7 @@ function refreshTop(){
 
 /* ======================= 人物档案 ======================= */
 function emptyArchive(){
-  return {id:'',name:'',xiaozi:'',age:'',birthday:'',family:'',identity:'',appearance:'',constitution:'',goodAt:'',talent:0,strategy:0,party:'',faction:'',lifespan:'',palace:'',pregnancy:'',marriage:'',rank:'',skin:'',createdAt:'',updatedAt:''};
+  return {id:'',name:'',xiaozi:'',age:'',birthday:'',family:'',identity:'',appearance:'',constitution:'',goodAt:'',talent1:0,talent2:0,talent3:0,strategy:0,party:'',faction:'',lifespan:'',palace:'',pregnancy:'',marriage:'',rank:'',skin:'',createdAt:'',updatedAt:''};
 }
 
 function renderArchive(){
@@ -509,7 +509,7 @@ function renderArchive(){
       html += '<div class="card-name">' + esc(a.name||'未命名') + ' <span class="tag red">' + esc(a.rank||'待定') + '</span></div>';
       html += '<div class="card-line"><span>小字</span><b>' + esc(a.xiaozi||'—') + '</b></div>';
       html += '<div class="card-line"><span>年岁</span><b>' + esc(a.age||'—') + '</b></div>';
-      html += '<div class="card-line"><span>才艺</span><b style="color:var(--gold2)">' + (a.talent||0) + '</b></div>';
+      html += '<div class="card-line"><span>才艺 (一二三)</span><b style="color:var(--gold2)">' + (a.talent1||0) + ' / ' + (a.talent2||0) + ' / ' + (a.talent3||0) + '</b></div>';
       html += '<div class="card-line"><span>谋略</span><b style="color:var(--jade)">' + (a.strategy||0) + '</b></div>';
       html += '<div class="card-line"><span>党派</span><b>' + esc(a.party||'—') + '</b></div>';
       html += '<div class="card-line"><span>派系</span><b>' + esc(a.faction||'—') + '</b></div>';
@@ -549,7 +549,9 @@ function viewArchive(id){
   html += '<div class="card-line"><span>体质</span><b>' + esc(a.constitution||'—') + '</b></div>';
   html += '<div class="card-line"><span>擅长</span><b>' + esc(a.goodAt||'—') + '</b></div>';
   html += '</div><div>';
-  html += '<div class="card-line"><span>才艺 (值)</span><b style="color:var(--gold2);font-size:15px;">' + (a.talent||0) + '</b></div>';
+  html += '<div class="card-line"><span>才艺一 (值)</span><b style="color:var(--gold2);font-size:15px;">' + (a.talent1||0) + '</b></div>';
+  html += '<div class="card-line"><span>才艺二 (值)</span><b style="color:var(--gold2);font-size:15px;">' + (a.talent2||0) + '</b></div>';
+  html += '<div class="card-line"><span>才艺三 (值)</span><b style="color:var(--gold2);font-size:15px;">' + (a.talent3||0) + '</b></div>';
   html += '<div class="card-line"><span>谋略 (值)</span><b style="color:var(--jade);font-size:15px;">' + (a.strategy||0) + '</b></div>';
   html += '<div class="card-line"><span>党派</span><b>' + esc(a.party||'—') + '</b></div>';
   html += '<div class="card-line"><span>派系</span><b>' + esc(a.faction||'—') + '</b></div>';
@@ -585,7 +587,9 @@ function openEditArchive(id){
   html += '<div class="field"><label>容 貌</label><input id="ea_appearance" value="' + esc(a.appearance) + '"></div>';
   html += '<div class="field"><label>体 质</label><input id="ea_constitution" value="' + esc(a.constitution) + '"></div>';
   html += '<div class="field"><label>擅 长（限五）</label><input id="ea_goodAt" value="' + esc(a.goodAt) + '"></div>';
-  html += '<div class="field"><label>才 艺 总 值</label><input id="ea_talent" type="number" value="' + (a.talent||0) + '"></div>';
+  html += '<div class="field"><label>才 艺 一 值</label><input id="ea_talent1" type="number" value="' + (a.talent1||0) + '"></div>';
+  html += '<div class="field"><label>才 艺 二 值</label><input id="ea_talent2" type="number" value="' + (a.talent2||0) + '"></div>';
+  html += '<div class="field"><label>才 艺 三 值</label><input id="ea_talent3" type="number" value="' + (a.talent3||0) + '"></div>';
   html += '<div class="field"><label>谋 略 总 值</label><input id="ea_strategy" type="number" value="' + (a.strategy||0) + '"></div>';
   html += '<div class="field"><label>党 派</label><input id="ea_party" value="' + esc(a.party) + '" placeholder="珹王党 / 皇帝党"></div>';
   html += '<div class="field"><label>派 系</label><input id="ea_faction" value="' + esc(a.faction) + '" placeholder="权 / 宠 / 中立"></div>';
@@ -614,7 +618,8 @@ function saveArchive(id){
       xiaozi: g('ea_xiaozi'), age: g('ea_age'), birthday: g('ea_birthday'),
       family: g('ea_family'), identity: g('ea_identity'), appearance: g('ea_appearance'),
       constitution: g('ea_constitution'), goodAt: g('ea_goodAt'), 
-      talent: parseInt(g('ea_talent'))||0, strategy: parseInt(g('ea_strategy'))||0,
+      talent1: parseInt(g('ea_talent1'))||0, talent2: parseInt(g('ea_talent2'))||0, talent3: parseInt(g('ea_talent3'))||0,
+      strategy: parseInt(g('ea_strategy'))||0,
       party: g('ea_party'), faction: g('ea_faction'), lifespan: g('ea_lifespan'),
       palace: g('ea_palace'), pregnancy: g('ea_pregnancy'),
       marriage: g('ea_marriage'), rank: g('ea_rank'), skin: g('ea_skin'),
@@ -628,7 +633,8 @@ function saveArchive(id){
     a.name = name; a.xiaozi = g('ea_xiaozi'); a.age = g('ea_age'); a.birthday = g('ea_birthday');
     a.family = g('ea_family'); a.identity = g('ea_identity'); a.appearance = g('ea_appearance');
     a.constitution = g('ea_constitution'); a.goodAt = g('ea_goodAt'); 
-    a.talent = parseInt(g('ea_talent'))||0; a.strategy = parseInt(g('ea_strategy'))||0;
+    a.talent1 = parseInt(g('ea_talent1'))||0; a.talent2 = parseInt(g('ea_talent2'))||0; a.talent3 = parseInt(g('ea_talent3'))||0;
+    a.strategy = parseInt(g('ea_strategy'))||0;
     a.party = g('ea_party'); a.faction = g('ea_faction'); a.lifespan = g('ea_lifespan');
     a.palace = g('ea_palace'); a.pregnancy = g('ea_pregnancy');
     a.marriage = g('ea_marriage'); a.rank = g('ea_rank'); a.skin = g('ea_skin');
@@ -673,24 +679,28 @@ function renderSkill(){
   var today = now();
   var todayCount = (u.skills||[]).filter(function(s){ return s.date === today; }).length;
   var html = '<div class="panel border-deco"><div class="panel-title">才艺培养</div>';
-  html += '<div class="panel-sub">抽 签 定 得 · 每 日 三 次 · 每 次 +1~8 · 同步至档案</div><div class="divider"></div>';
+  html += '<div class="panel-sub">抽 签 定 得 · 每 日 共 三 次 · 每 次 +1~8 · 同步至档案</div><div class="divider"></div>';
   html += '<div class="grid g3" style="margin-bottom:20px;">';
   html += '<div class="card" style="text-align:center;"><div style="font-size:12px;color:var(--ink2);">今日已修习</div><div style="font-size:30px;color:var(--red);font-weight:600;">' + todayCount + ' / 3</div></div>';
   html += '<div class="card" style="text-align:center;"><div style="font-size:12px;color:var(--ink2);">累计修习</div><div style="font-size:30px;color:var(--gold2);font-weight:600;">' + (u.skills||[]).length + '</div></div>';
   html += '<div class="card" style="text-align:center;"><div style="font-size:12px;color:var(--ink2);">后台积分</div><div style="font-size:30px;color:var(--jade);font-weight:600;">' + (u.points||0) + '</div></div>';
   html += '</div>';
-  html += '<div style="text-align:center;margin:26px 0;">';
-  if(todayCount >= 3){
-    html += '<button type="button" class="btn primary" style="padding:14px 54px;font-size:16px;letter-spacing:.4em;" disabled>今 日 已 满</button>';
-  }else{
-    html += '<button type="button" class="btn primary" style="padding:14px 54px;font-size:16px;letter-spacing:.4em;" onclick="drawSkill()">抽 签 修 习</button>';
-  }
-  html += '</div><div class="divider"></div><div class="panel-sub">修 习 记 录</div>';
+  
+  var disabledStr = todayCount >= 3 ? ' disabled' : '';
+  html += '<div class="grid g3" style="margin:26px 0;">';
+  html += '<div style="text-align:center;"><button type="button" class="btn primary" style="width:100%;padding:14px 0;font-size:15px;letter-spacing:.2em;"' + disabledStr + ' onclick="drawSkill(1)">抽 签 · 才艺一</button></div>';
+  html += '<div style="text-align:center;"><button type="button" class="btn primary" style="width:100%;padding:14px 0;font-size:15px;letter-spacing:.2em;"' + disabledStr + ' onclick="drawSkill(2)">抽 签 · 才艺二</button></div>';
+  html += '<div style="text-align:center;"><button type="button" class="btn primary" style="width:100%;padding:14px 0;font-size:15px;letter-spacing:.2em;"' + disabledStr + ' onclick="drawSkill(3)">抽 签 · 才艺三</button></div>';
+  html += '</div>';
+  if(todayCount >= 3) html += '<div style="text-align:center;color:var(--red);font-size:13px;margin-bottom:20px;">今日次数已用完</div>';
+  
+  html += '<div class="divider"></div><div class="panel-sub">修 习 记 录</div>';
   if((u.skills||[]).length){
-    html += '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>时间</th><th>科目</th><th>所获</th></tr></thead><tbody>';
+    html += '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>时间</th><th>科目</th><th>所获</th><th>类别</th></tr></thead><tbody>';
     for(var i = 0; i < Math.min(u.skills.length, 30); i++){
       var s = u.skills[i];
-      html += '<tr><td>' + esc(s.time) + '</td><td><span class="tag">' + esc(s.name) + '</span></td><td style="color:var(--jade);font-weight:600;">+' + s.gain + '</td></tr>';
+      var typeName = s.type ? ('才艺' + (s.type==1?'一':s.type==2?'二':'三')) : '才艺';
+      html += '<tr><td>' + esc(s.time) + '</td><td><span class="tag">' + esc(s.name) + '</span></td><td style="color:var(--jade);font-weight:600;">+' + s.gain + '</td><td>' + typeName + '</td></tr>';
     }
     html += '</tbody></table></div>';
   }else{
@@ -700,18 +710,21 @@ function renderSkill(){
   document.getElementById('pg-skill').innerHTML = html;
 }
 
-function drawSkill(){
+function drawSkill(type){
   var u = cur();
   var today = now();
   var todayCount = (u.skills||[]).filter(function(s){ return s.date === today; }).length;
   if(todayCount >= 3) return toast('今日修习已满','err');
   var sk = SKILL_NAMES[Math.floor(Math.random() * SKILL_NAMES.length)];
   var gain = Math.floor(Math.random() * 8) + 1;
-  showDrawModal('才 艺 抽 签', sk, '勤修不辍，日有所进。', gain, function(){
+  var statKey = 'talent' + type;
+  var displayName = '才艺' + (type==1?'一':type==2?'二':'三');
+  
+  showDrawModal(displayName + ' 抽 签', sk, '勤修不辍，日有所进。', gain, function(){
     u.points = (u.points||0) + gain;
-    u.skills.unshift({time: nowFull(), date: today, name: sk, gain: gain});
-    var synced = addStatToArchive(DB.session, 'talent', gain);
-    pushLog('修习「' + sk + '」，+' + gain + (synced ? ' (已更新档案)' : ' (无同名档案)'));
+    u.skills.unshift({time: nowFull(), date: today, name: sk, gain: gain, type: type});
+    var synced = addStatToArchive(DB.session, statKey, gain);
+    pushLog(displayName + '修习「' + sk + '」，+' + gain + (synced ? ' (已更新档案)' : ' (无同名档案)'));
     saveDB();
     refreshTop();
     go('skill');
@@ -1025,19 +1038,56 @@ function delItem(key, idx, page){
 function renderShop(){
   var html = '<div class="panel border-deco"><div class="panel-title">黑 市</div>';
   html += '<div class="panel-sub">琳 琅 满 目 · 仅 供 观 览</div><div class="divider"></div>';
+  
+  if(isAdmin()){
+    html += '<div class="grid g4" style="margin-bottom:18px;background:rgba(201,169,97,.06);padding:12px;border-radius:4px;">';
+    html += '<div class="field" style="margin-bottom:0;"><label>物品名称</label><input id="shop_new_name"></div>';
+    html += '<div class="field" style="margin-bottom:0;"><label>价格 (银两)</label><input id="shop_new_price" type="number" value="100"></div>';
+    html += '<div class="field" style="margin-bottom:0;"><label>描述</label><input id="shop_new_desc"></div>';
+    html += '<div class="field" style="margin-bottom:0;"><label>图标 (可选)</label><input id="shop_new_icon" placeholder="如：🪭"></div>';
+    html += '<div class="field" style="margin-bottom:0;display:flex;align-items:flex-end;grid-column:1/-1;"><button type="button" class="btn primary" onclick="addShopItem()">+ 上 架 物 品</button></div>';
+    html += '</div>';
+  }
+
   html += '<div class="grid g2">';
   for(var i = 0; i < DB.shop.length; i++){
     var it = DB.shop[i];
-    html += '<div class="shop-item">';
+    html += '<div class="shop-item" style="position:relative;">';
     html += '<div class="shop-icon">' + (it.icon || '◈') + '</div>';
     html += '<div class="shop-info"><div class="n">' + esc(it.name) + '</div><div class="d">' + esc(it.desc) + '</div></div>';
     html += '<div style="text-align:right;"><div class="shop-price">◈ ' + it.price + '</div></div>';
+    if(isAdmin()) {
+      html += '<div class="x" style="position:absolute;top:8px;right:12px;cursor:pointer;color:var(--red);font-weight:700;" onclick="delShopItem(' + i + ')">×</div>';
+    }
     html += '</div>';
   }
   html += '</div>';
   html += '<div style="text-align:center;font-size:12px;color:var(--ink2);opacity:.6;margin-top:20px;letter-spacing:.15em;">— 货 品 仅 供 观 览 ， 站 内 不 设 购 买 —</div>';
   html += '</div>';
   document.getElementById('pg-shop').innerHTML = html;
+}
+
+function addShopItem(){
+  if(!isAdmin()) return toast('无权限','err');
+  var name = document.getElementById('shop_new_name').value.trim();
+  var price = parseInt(document.getElementById('shop_new_price').value) || 0;
+  var desc = document.getElementById('shop_new_desc').value.trim();
+  var icon = document.getElementById('shop_new_icon').value.trim() || '◈';
+  if(!name) return toast('名称不可为空','err');
+  
+  DB.shop.push({ id: 's' + Date.now(), icon: icon, name: name, desc: desc, price: price });
+  saveDB();
+  toast('已上架','ok');
+  go('shop');
+}
+
+function delShopItem(idx){
+  if(!isAdmin()) return toast('无权限','err');
+  if(!confirm('确定下架此物品？')) return;
+  DB.shop.splice(idx, 1);
+  saveDB();
+  toast('已下架','ok');
+  go('shop');
 }
 
 /* ======================= 地图 ======================= */
@@ -1425,9 +1475,7 @@ function init(){
   loadDB(function(err){
     if(tip) tip.textContent = err ? '云端连接失败，请刷新重试' : '系统已就绪';
     
-    // 【重要】每次打开，先强制清空 session，绝不自动登录
     if(DB) DB.session = null;
-    
     document.getElementById('loginView').classList.remove('hide');
     document.getElementById('app').classList.add('hide');
     
